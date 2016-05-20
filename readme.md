@@ -15,6 +15,13 @@
 
 
 
+## 入门
+```
+var tpl = new Template(template);
+tpl.render(data);
+```
+
+
 ## 文本声明
 
 ### 变量定义、赋值
@@ -73,3 +80,4 @@
 转义输出 {{exp}}
 原样输出 {{=exp}}
 ```
+
