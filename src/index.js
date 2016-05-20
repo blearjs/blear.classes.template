@@ -109,7 +109,7 @@ var Template = Events.extend({
     constructor: function (template, options) {
         var the = this;
 
-        the.Super();
+        Template.parent(the);
         the[_options] = options = object.assign(true, {}, defaults, options);
         var templateEl = selector.query(template)[0];
 
