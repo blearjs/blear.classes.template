@@ -5,34 +5,32 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    var reVarible = /^[a-z_$][a-z\d$_]*\s/i;
-    var reObject = /[\[.]/;
+var reVarible = /^[a-z_$][a-z\d$_]*\s/i;
+var reObject = /[\[.]/;
 
-    // set abc = 123;
-    // set abc.def = 123;
-    // set abc[def] = 123;
-    // set abc = some.abc
-    module.exports = function (vnode) {
-        var value = vnode.value;
-        var varible = '';
+// set abc = 123;
+// set abc.def = 123;
+// set abc[def] = 123;
+// set abc = some.abc
+module.exports = function (vnode) {
+    var value = vnode.value;
+    var varible = '';
 
-        value.replace(reVarible, function (source) {
-            varible = source;
-            return '';
-        });
+    value.replace(reVarible, function (source) {
+        varible = source;
+        return '';
+    });
 
-        if (reObject.test(varible)) {
-            return [value, ''];
-        }
+    if (reObject.test(varible)) {
+        return [value, ''];
+    }
 
-        return [
-            'if (typeof ' + varible + ' === "undefined") {',
-            '  var ' + varible + ' = null;',
-            '}',
-            value
-        ].join('\n');
-    };
-});
+    return [
+        'if (typeof ' + varible + ' === "undefined") {',
+        '  var ' + varible + ' = null;',
+        '}',
+        value
+    ].join('\n');
+};

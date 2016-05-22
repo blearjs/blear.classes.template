@@ -5,13 +5,11 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    var utils = require('./utils.js');
-    var object = require('blear.utils.object');
+var utils = require('./utils.js');
+var object = require('blear.utils.object');
 
-    module.exports = function (vnode, directive) {
-        object.assign(vnode.styleMap, utils.str2Obj(directive.value));
-    };
-});
+module.exports = function (vnode, directive) {
+    object.assign(vnode.styleMap, utils.str2Obj(directive.value));
+};

@@ -5,14 +5,12 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    // exp
-    module.exports = function (vnode, directive) {
-        return [
-            'if (' + directive.value + ') {',
-            '}'
-        ];
-    };
-});
+// exp
+module.exports = function (vnode, directive) {
+    return [
+        'if (' + directive.value + ') {',
+        '}'
+    ];
+};

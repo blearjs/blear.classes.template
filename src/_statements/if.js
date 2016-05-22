@@ -5,14 +5,12 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    module.exports = function (vnode) {
-        if (vnode.open) {
-            return 'if (Boolean(' + vnode.value + ')) {';
-        } else {
-            return '}';
-        }
-    };
-});
+module.exports = function (vnode) {
+    if (vnode.open) {
+        return 'if (Boolean(' + vnode.value + ')) {';
+    } else {
+        return '}';
+    }
+};

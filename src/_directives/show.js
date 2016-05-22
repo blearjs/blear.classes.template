@@ -5,11 +5,9 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    // @show="exp"
-    module.exports = function (vnode, directive) {
-        vnode.styleMap.display = '(Boolean(' + directive.value + ') ? "block": "none")';
-    };
-});
+// @show="exp"
+module.exports = function (vnode, directive) {
+    vnode.styleMap.display = '(Boolean(' + directive.value + ') ? "block": "none")';
+};

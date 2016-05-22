@@ -6,24 +6,22 @@
  */
 
 
-define(function (require, exports, module) {
-    'use strict';
+'use strict';
 
-    var reIf = /^if\s/;
+var reIf = /^if\s/;
 
-    module.exports = function (vnode) {
-        var isElseIf = false;
-        var value = vnode.value;
+module.exports = function (vnode) {
+    var isElseIf = false;
+    var value = vnode.value;
 
-        value = value.replace(reIf, function () {
-            isElseIf = true;
-            return '';
-        });
+    value = value.replace(reIf, function () {
+        isElseIf = true;
+        return '';
+    });
 
-        if (isElseIf) {
-            return '} else if (Boolean(' + value + ')) {';
-        }
+    if (isElseIf) {
+        return '} else if (Boolean(' + value + ')) {';
+    }
 
-        return '} else {';
-    };
-});
+    return '} else {';
+};
