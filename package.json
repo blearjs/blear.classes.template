@@ -1,6 +1,6 @@
 {
   "name": "blear.classes.template",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "指令类型模板引擎",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
@@ -39,8 +39,6 @@
   "peerDependencies": {
     "blear.shims.lexer": "1.x",
     "blear.classes.events": "1.x",
-    "blear.core.selector": "1.x",
-    "blear.core.attribute": "1.x",
     "blear.utils.object": "1.x",
     "blear.utils.array": "1.x",
     "blear.utils.collection": "1.x",

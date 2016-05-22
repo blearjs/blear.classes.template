@@ -11,8 +11,6 @@
 
 var Lexer =      require('blear.shims.lexer');
 var Events =     require('blear.classes.events');
-var selector =   require('blear.core.selector');
-var attribute =  require('blear.core.attribute');
 var object =     require('blear.utils.object');
 var array =      require('blear.utils.array');
 var collection = require('blear.utils.collection');
@@ -111,12 +109,6 @@ var Template = Events.extend({
 
         Template.parent(the);
         the[_options] = options = object.assign(true, {}, defaults, options);
-        var templateEl = selector.query(template)[0];
-
-        if (templateEl) {
-            template = attribute.html(templateEl);
-        }
-
         the[_instanceMethods] = object.assign({}, STATIC_METHODS, options.methods);
         the[_dataName] = generateVarName();
         the[_methodsName] = generateVarName();
