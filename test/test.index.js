@@ -280,17 +280,6 @@ describe('测试文件', function () {
         expect(/<b\s+style="e\s*:\s*f(\s*;)+\s*g\s*:\s*2(\s*;)+\s*i\s*:\s*3(\s*;)*">/.test(html)).toEqual(true);
     });
 
-    it('template element', function () {
-        var el = document.createElement('div');
-        el.innerHTML = '{{a}}';
-        document.body.appendChild(el);
-        var tpl = new Template(el);
-        var data = {a: 1};
-        var html = tpl.render(data);
-        expect(html).toEqual('1');
-        document.body.removeChild(el);
-    });
-
     it('attr="{{a}}"', function () {
         var template = '<a a="{{a}}"></a>';
         var data = {a: 'b'};
