@@ -9,16 +9,16 @@
 'use strict';
 
 
-var Lexer =      require('blear.shims.lexer');
-var Events =     require('blear.classes.events');
-var object =     require('blear.utils.object');
-var array =      require('blear.utils.array');
+var Lexer = require('blear.shims.lexer');
+var Events = require('blear.classes.events');
+var object = require('blear.utils.object');
+var array = require('blear.utils.array');
 var collection = require('blear.utils.collection');
-var number =     require('blear.utils.number');
-var string =     require('blear.utils.string');
-var json =       require('blear.utils.json');
-var fun =        require('blear.utils.function');
-var random =     require('blear.utils.random');
+var number = require('blear.utils.number');
+var string = require('blear.utils.string');
+var json = require('blear.utils.json');
+var fun = require('blear.utils.function');
+var random = require('blear.utils.random');
 
 
 var staticDirectives = {};
@@ -913,6 +913,15 @@ Template.method = function (name, fn) {
  */
 Template.statement = function (name, install) {
     staticStatements[name] = install;
+};
+
+
+/**
+ * 字符化
+ * @param value
+ */
+Template.textify = function (value) {
+    return textify(value);
 };
 
 
