@@ -122,14 +122,14 @@ var Template = Events.extend({
         template = the[_processIgnoreStatement](template);
         the[_tokens] = new Lexer(template).lex();
 
-        if (DEBUG) {
+        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
             console.log('_tokens', the[_tokens]);
         }
 
         the[_pos] = -1;
         the[_vTemplate] = the[_parse]();
 
-        if (DEBUG) {
+        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
             console.log('_vTemplate', the[_vTemplate]);
         }
     },
@@ -303,11 +303,11 @@ var Template = Events.extend({
             /* jshint evil: true */
             the[_compiler] = new Function(the[_dataName], the[_methodsName], the[_protectionName], compilerStr);
 
-            if (DEBUG) {
+            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
                 console.log('_compiler', the[_compiler]);
             }
         } catch (err) {
-            if (DEBUG) {
+            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
                 console.log('_compiler', compilerStr);
             }
 
@@ -847,7 +847,7 @@ pro[_compileDirectives] = function (vnode) {
 
     var remainList = object.keys(vnode.directives);
 
-    if (DEBUG) {
+    if (typeof DEBUG !== 'undefined' && DEBUG === true) {
         if (remainList.length) {
             console.warn('不支持该指令：@' + remainList.join('/'));
         }
@@ -867,7 +867,7 @@ pro[_compileStatement] = function (vnode) {
     var statementName = vnode.name;
     var statement = the[_statements][statementName];
 
-    if (DEBUG) {
+    if (typeof DEBUG !== 'undefined' && DEBUG === true) {
         if (!statement) {
             console.warn('不支持该声明：#' + statementName);
         }
