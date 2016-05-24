@@ -91,7 +91,6 @@ var defaults = {
 
     /**
      * 是否压缩产出
-     * @todo
      * @type Boolean
      */
     compress: true,
@@ -595,9 +594,16 @@ pro[_program] = function () {
  * @param token
  */
 pro[_TEXT] = function (token) {
+    var options = this[_options];
+    var text = token.value;
+
+    if (options.compress) {
+        text = text.trim();
+    }
+
     return {
         type: 'text',
-        value: token.value
+        value: text
     };
 };
 
