@@ -11,11 +11,12 @@ var Template = require('../src/index.js');
 
 
 describe('测试文件', function () {
-    it('<!doctype html>', function () {
-        var template = '<!doctype html>';
+    it('<!DOCTYPE html>', function () {
+        var template = '<!DOCTYPE html><HTML>123</html>';
+        var template2 = '<!doctype html><html>123</html>';
         var tpl = new Template(template);
         var html = tpl.render({});
-        expect(html).toEqual(template);
+        expect(html).toEqual(template2);
     });
 
     it('{{varible}}', function (done) {

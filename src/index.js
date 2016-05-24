@@ -616,7 +616,7 @@ pro[_TAG_OPEN] = function (token) {
     var lastName = '';
     var type = token.value;
     var value = token.value;
-    var tag = value;
+    var tag = value.toLocaleLowerCase();
     var isDirective = false;
     var directiveName;
 
