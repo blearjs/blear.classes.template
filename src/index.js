@@ -46,7 +46,7 @@ var list2Map = function (list) {
     return map;
 };
 
-var singleTagList = "area base br col embed hr img input keygen link menuitem meta param source track wbr".split(' ');
+var singleTagList = "area base br col doctype embed hr img input keygen link menuitem meta param source track wbr".split(' ');
 var booleanAttrList = 'selected checked disabled readonly required open autofocus controls autoplay compact loop defer multiple'.split(' ');
 var singleTagMap = list2Map(singleTagList);
 var booleanAttrMap = list2Map(booleanAttrList);
@@ -670,6 +670,10 @@ pro[_TAG_OPEN] = function (token) {
         value = token.value;
     }
 
+    if (lastName) {
+        attrs[lastName] = true;
+    }
+
     var isSingle = singleTagMap[tag];
     var ret = {
         type: 'el',
@@ -679,6 +683,10 @@ pro[_TAG_OPEN] = function (token) {
         classMap: classMap,
         styleMap: styleMap
     };
+
+    if (tag === 'doctype') {
+        ret.tag = '!' + ret.tag;
+    }
 
     if (!isSingle) {
         ret.children = the[_parse]();
@@ -801,9 +809,7 @@ pro[_compileAttrs] = function (vnode) {
     });
 
     object.each(attrs, function (name, value) {
-        value = the[_parseExpression](value, false);
-
-        if (booleanAttrMap[name]) {
+        if (booleanAttrMap[name] || value === true) {
             // 说明是表达式
             if (value) {
                 arttsList.push(the[_outputName] + ' += " " + (Boolean(' + value + ') ? ' + textify(name) + ' : "");');
@@ -812,6 +818,8 @@ pro[_compileAttrs] = function (vnode) {
             }
 
             return;
+        } else {
+            value = the[_parseExpression](value, false);
         }
 
         if (!value) {
