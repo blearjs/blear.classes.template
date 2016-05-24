@@ -11,6 +11,12 @@ var Template = require('../src/index.js');
 
 
 describe('测试文件', function () {
+    it('<!doctype html>', function () {
+        var str = '<!doctype html>';
+        var tpl = new Template(str);
+    });
+
+
     it('{{varible}}', function (done) {
         var str1 = '{{varible}}';
         var tpl = new Template(str1);
