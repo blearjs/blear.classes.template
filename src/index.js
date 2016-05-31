@@ -846,6 +846,8 @@ pro[_compileAttrs] = function (vnode) {
 pro[_compileDirectives] = function (vnode) {
     var the = this;
     var ret = ['', ''];
+    var beforeList = [];
+    var afterList = [];
 
     array.each(the[_directivesList], function (index, directive) {
         var name = directive.name;
@@ -853,8 +855,10 @@ pro[_compileDirectives] = function (vnode) {
 
         if (value) {
             var _ret = directive.install.call(the, vnode, value) || ret;
-            ret[0] += _ret[0];
-            ret[1] += _ret[1];
+
+            beforeList.push(_ret[0]);
+            afterList.unshift(_ret[1]);
+
             delete vnode.directives[name];
         }
     });
@@ -867,7 +871,7 @@ pro[_compileDirectives] = function (vnode) {
         }
     }
 
-    return ret;
+    return [beforeList.join('\n'), afterList.join('\n')];
 };
 
 
