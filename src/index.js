@@ -24,8 +24,7 @@ var random = require('blear.utils.random');
 var staticDirectives = {};
 var staticStatements = {};
 var reOriginal = /^=/;
-var rePrivateKey = /^[_$]/;
-var reSafeKey = /^[a-z][a-z\d$_]*$/i;
+var reSafeKey = /^[a-z_$][a-z\d$_]*$/i;
 var reUnExp = /\\$/;
 var IGNORE_SEP = '•';
 var reStatement = /^#/;
@@ -327,7 +326,7 @@ var Template = Events.extend({
         var the = this;
         var context = {
             isSafeKey: function (obj, key) {
-                return object.hasOwn(obj, key) && !rePrivateKey.test(key) && reSafeKey.test(key);
+                return object.hasOwn(obj, key)  && reSafeKey.test(key);
             },
             each: collection.each,
             escape: string.escapeHTML,
