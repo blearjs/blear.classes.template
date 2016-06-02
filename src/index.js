@@ -29,6 +29,7 @@ var reUnExp = /\\$/;
 var IGNORE_SEP = '•';
 var reStatement = /^#/;
 var reDirective = /^@/;
+var reExpression = /\{\{.*?}}/;
 var reIgnore = /\{\{#ignore}}([\s\S]*?)\{\{\/ignore}}/;
 
 
@@ -326,7 +327,7 @@ var Template = Events.extend({
         var the = this;
         var context = {
             isSafeKey: function (obj, key) {
-                return object.hasOwn(obj, key)  && reSafeKey.test(key);
+                return object.hasOwn(obj, key) && reSafeKey.test(key);
             },
             each: collection.each,
             escape: string.escapeHTML,
@@ -814,24 +815,29 @@ pro[_compileAttrs] = function (vnode) {
     });
 
     object.each(attrs, function (name, value) {
-        if (booleanAttrMap[name] || value === true) {
-            // 说明是表达式
-            if (value) {
-                arttsList.push(the[_outputName] + ' += " " + (Boolean(' + value + ') ? ' + textify(name) + ' : "");');
-            } else {
-                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ';');
-            }
-
-            return;
-        } else {
-            value = the[_parseExpression](value, false);
-        }
-
         if (!value) {
             return;
         }
 
-        arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"" + ' + value + ' + "\\"";');
+        // 表达式求值
+        if (reExpression.test(value) && value !== true) {
+            value = the[_parseExpression](value, false);
+
+            // 布尔属性
+            if (booleanAttrMap[name]) {
+                arttsList.push(the[_outputName] + ' += " " + (Boolean(' + value + ') ? ' + textify(name) + ' : "");');
+            } else {
+                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"" + ' + value + ' +"\\"";');
+            }
+        }
+        // 常量
+        else {
+            if (value && value !== true) {
+                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"' + value + '\\"";');
+            } else {
+                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ';');
+            }
+        }
     });
 
     return arttsList.join('\n');
