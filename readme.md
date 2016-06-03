@@ -61,7 +61,25 @@ tpl.render(data);
 
 ### 循环
 ```
-<li @for="key, val in item"></li>
+<li @for="val in list"></li>
+<li @for="key, val in list"></li>
+```
+
+### 循环过滤
+```
+<li @for="key, val in list" @filter="val > 2"></li>
+```
+
+### 循环排序
+```
+<li @for="key, val in list" @order="val">正序</li>
+<li @for="key, val in list" @order="val -1">倒序</li>
+```
+
+### 循环选段
+```
+<li @for="key, val in list" @limit="10">从 0 开始，连续取 10 个</li>
+<li @for="key, val in list" @limit="10 20">从 20 开始，连续取 10 个</li>
 ```
 
 ### 判断
@@ -74,6 +92,8 @@ tpl.render(data);
 @style="font-size: fontSize + 'px'; width: width + 'px'"
 @class="class-a: classA, class-b: classB"
 ```
+
+
 
 ## 输出
 ```
