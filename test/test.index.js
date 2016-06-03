@@ -415,4 +415,44 @@ describe('测试文件', function () {
         var html = tpl.render(data);
         expect(html).toEqual('<li>4</li><li>3</li>');
     });
+
+    it('@limit length', function () {
+        var template = '<li @for="item in list" @limit="2">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>1</li><li>2</li>');
+    });
+
+    it('@limit length start', function () {
+        var template = '<li @for="item in list" @limit="2 2">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>3</li><li>4</li>');
+    });
+
+    it('@limit length start @filter', function () {
+        var template = '<li @for="item in list" @limit="3 1" @filter="item.id % 2 == 0">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>2</li><li>4</li>');
+    });
+
+    it('@limit length start @filter', function () {
+        var template = '<li @for="item in list" @limit="3 1" @filter="item.id % 2 == 0" @order="item.id -1">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>2</li>');
+    });
 });

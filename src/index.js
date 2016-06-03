@@ -871,13 +871,14 @@ pro[_compileDirectives] = function (vnode) {
     });
 
     if (typeof DEBUG !== 'undefined' && DEBUG === true) {
+        var unsupportNames = [];
+
         object.each(vnode.directives, function (index, directive) {
             if (!directive.installed) {
                 unsupportNames.push(directive.name);
             }
         });
 
-        var unsupportNames = [];
         if (unsupportNames.length) {
             console.warn('不支持该指令：@' + unsupportNames.join('/'));
         }
