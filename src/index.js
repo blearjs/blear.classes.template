@@ -520,7 +520,7 @@ var initDirectives = function (directives) {
 
     // 按照优先级排序
     directivesList.sort(function (a, b) {
-        return a - b;
+        return b.priority - a.priority;
     });
 
     return directivesList
