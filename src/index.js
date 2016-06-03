@@ -527,8 +527,6 @@ var initDirectives = function (directives) {
 };
 
 
-
-
 /**
  * 解析碎片
  * @returns {Array}
@@ -954,6 +952,16 @@ Template.statement = function (name, install) {
  */
 Template.textify = function (value) {
     return textify(value);
+};
+
+
+/**
+ * 判断字符串是否为表达式
+ * @param value
+ * @returns {boolean}
+ */
+Template.isExpression = function (value) {
+    return reExpression.test(value);
 };
 
 
