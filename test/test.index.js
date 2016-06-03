@@ -365,4 +365,54 @@ describe('测试文件', function () {
 
         expect(tpl.render({})).toEqual(html);
     });
+
+    it('@filter []', function () {
+        var template = '<li @for="item in list" @filter="item > 2">{{item}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [1, 2, 3, 4]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>3</li><li>4</li>');
+    });
+
+    it('@order []', function () {
+        var template = '<li @for="item in list" @order="item 1">{{item}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [1, 2, 3, 4]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>1</li><li>2</li><li>3</li><li>4</li>');
+    });
+
+    it('@order [{}]', function () {
+        var template = '<li @for="item in list" @order="item.id 1">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>1</li><li>2</li><li>3</li><li>4</li>');
+    });
+
+    it('@order [{}] + @filter', function () {
+        var template = '<li @for="item in list" @order="item.id 1" @filter="item.id > 2">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>3</li><li>4</li>');
+    });
+
+    it('@order [{}] + @filter', function () {
+        var template = '<li @for="item in list" @order="item.id -1" @filter="item.id > 2">{{item.id}}</li>';
+        var tpl = new Template(template);
+        var data = {
+            list: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+        };
+        var html = tpl.render(data);
+        expect(html).toEqual('<li>4</li><li>3</li>');
+    });
 });

@@ -52,3 +52,21 @@ exports.str2Obj = function (str) {
         return val;
     });
 };
+
+
+/**
+ * 解析 for 指令
+ * @param str
+ * @returns {*[]}
+ */
+exports.parseFor = function (str) {
+    var forInList = str.split(' in ');
+    var keyValName = forInList[0];
+    var keyValList = keyValName.split(',');
+
+    var valName = keyValList.pop();
+    var keyName = keyValList.pop() || '__index__';
+    var listName = forInList[1];
+
+    return [keyName, valName, listName];
+};

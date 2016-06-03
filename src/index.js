@@ -19,6 +19,7 @@ var string = require('blear.utils.string');
 var json = require('blear.utils.json');
 var fun = require('blear.utils.function');
 var random = require('blear.utils.random');
+var typeis = require('blear.utils.typeis');
 
 
 var staticDirectives = {};
@@ -329,6 +330,7 @@ var Template = Events.extend({
             isSafeKey: function (obj, key) {
                 return object.hasOwn(obj, key) && reSafeKey.test(key);
             },
+            typeis: typeis,
             each: collection.each,
             escape: string.escapeHTML,
             bind: fun.bind
@@ -855,24 +857,29 @@ pro[_compileDirectives] = function (vnode) {
     var afterList = [];
 
     array.each(the[_directivesList], function (index, directive) {
-        var name = directive.name;
-        var value = vnode.directives[name];
+        var registedDirectiveName = directive.name;
 
-        if (value) {
-            var _ret = directive.install.call(the, vnode, value) || ret;
+        // 实际指令
+        if (registedDirectiveName in vnode.directives) {
+            var instanceDirective = vnode.directives[registedDirectiveName];
+            var _ret = directive.install.call(the, vnode, instanceDirective) || ret;
 
+            instanceDirective.installed = true;
             beforeList.push(_ret[0]);
             afterList.unshift(_ret[1]);
-
-            delete vnode.directives[name];
         }
     });
 
-    var remainList = object.keys(vnode.directives);
-
     if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-        if (remainList.length) {
-            console.warn('不支持该指令：@' + remainList.join('/'));
+        object.each(vnode.directives, function (index, directive) {
+            if (!directive.installed) {
+                unsupportNames.push(directive.name);
+            }
+        });
+
+        var unsupportNames = [];
+        if (unsupportNames.length) {
+            console.warn('不支持该指令：@' + unsupportNames.join('/'));
         }
     }
 
@@ -948,11 +955,14 @@ Template.textify = function (value) {
 };
 
 
-Template.directive('if', 10000, require('./_directives/if.js'));
-Template.directive('show', 1000, require('./_directives/show.js'));
-Template.directive('class', 100, require('./_directives/class.js'));
-Template.directive('style', 100, require('./_directives/style.js'));
-Template.directive('for', 1, require('./_directives/for.js'));
+var BASE_PRIORITY = 10000;
+Template.directive('if', BASE_PRIORITY, require('./_directives/if.js'));
+Template.directive('show', BASE_PRIORITY - 1, require('./_directives/show.js'));
+Template.directive('class', BASE_PRIORITY / 10, require('./_directives/class.js'));
+Template.directive('style', BASE_PRIORITY / 10 - 1, require('./_directives/style.js'));
+Template.directive('order', BASE_PRIORITY / 100, require('./_directives/order.js'));
+Template.directive('for', BASE_PRIORITY / 100 - 1, require('./_directives/for.js'));
+Template.directive('filter', BASE_PRIORITY / 100 - 2, require('./_directives/filter.js'));
 
 Template.statement('if', require('./_statements/if.js'));
 Template.statement('else', require('./_statements/else.js'));

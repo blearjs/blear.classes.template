@@ -7,21 +7,26 @@
 
 'use strict';
 
+var utils = require('./utils');
+
+
 // key,val in list
 // val in list
 module.exports = function (vnode, directive) {
-    var forInList = directive.value.split(' in ');
-    var keyValName = forInList[0];
-    var keyValList = keyValName.split(',');
-    var valName = keyValList.pop();
-    var keyName = keyValList.pop() || this.genVarName();
-    var listName = forInList[1];
+    var ret = utils.parseFor(directive.value);
+    var keyName = ret[0];
+    var valName = ret[1];
+    var listName = ret[2];
     var beforeList = [
         this.thisName() + '.each(' + listName + ', function (' + keyName + ', ' + valName + ') {'
     ];
     var afterList = [
         '});'
     ];
+
+    directive.keyName = keyName;
+    directive.valName = valName;
+    directive.listName = listName;
 
     return [beforeList.join('\n'), afterList.join('\n')];
 };
