@@ -358,6 +358,30 @@ describe('测试文件', function () {
         expect(html).toEqual('{{a}}');
     });
 
+    it('#parseExpression', function () {
+        var exp = 'a{{b}}';
+        var tpl = new Template('');
+        var ret = tpl.parseExpression(exp, false);
+
+        expect(ret).toEqual('"a" + (b)');
+    });
+
+    it('#parseExpression', function () {
+        var exp = 'a';
+        var tpl = new Template('');
+        var ret = tpl.parseExpression(exp, false);
+
+        expect(ret).toEqual('"a"');
+    });
+
+    it('#parseExpression', function () {
+        var exp = '{{a}}';
+        var tpl = new Template('');
+        var ret = tpl.parseExpression(exp, false);
+
+        expect(ret).toEqual('(a)');
+    });
+
     it('compress', function () {
         var template = '<div     a="1"\n\n\n\n\nb="2"   >\n\n\n\t\tc\n\n\n\t\t</div>';
         var html = '<div a="1" b="2">c</div>';

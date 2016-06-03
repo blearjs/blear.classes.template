@@ -383,7 +383,83 @@ var Template = Events.extend({
         object.assign(the[_statements], statement);
 
         return the;
+    },
+
+    /**
+     * 解析表达式
+     * @param expression
+     * @param scape
+     * @returns {String}
+     */
+    parseExpression: function (expression, scape) {
+        var the = this;
+        var tokens = new Lexer(expression).lex();
+        var index = 0;
+        var token = tokens[index++];
+        var exp = '';
+        var expList = [];
+        var inExp = false;
+        var expStart = false;
+        var isOriginal = false;
+
+        while (token.type !== 'EOF') {
+            var value = token.value;
+
+            switch (token.type) {
+                case 'EXPR_OPEN':
+                    inExp = true;
+                    isOriginal = false;
+                    expStart = true;
+                    // 表达式使用括号包裹 开始
+                    exp = '(';
+                    break;
+
+                case 'END':
+                    inExp = false;
+
+                    if (!isOriginal && scape) {
+                        exp += ')';
+                    }
+
+                    // 表达式使用括号包裹 结束
+                    exp += ')';
+                    expList.push(exp);
+                    break;
+
+                case 'TEXT':
+                    expList.push(textify(value));
+                    break;
+
+                case 'STRING':
+                    exp += textify(value);
+                    break;
+
+                default:
+                    if (inExp) {
+                        if (expStart) {
+                            value = value.replace(reOriginal, function () {
+                                isOriginal = true;
+                                return '';
+                            });
+
+                            if (!isOriginal && scape) {
+                                exp += the[_thisName] + '.escape(';
+                            }
+                        }
+
+                        exp += value;
+                        expStart = false;
+                    } else {
+                        expList.push(textify(value));
+                    }
+                    break;
+            }
+            token = tokens[index++];
+        }
+
+        return expList.join(' + ');
     }
+
 });
 var _options = Template.sole();
 var _instanceMethods = Template.sole();
@@ -413,7 +489,6 @@ var _thisName = Template.sole();
 var _dataName = Template.sole();
 var _methodsName = Template.sole();
 var _protectionName = Template.sole();
-var _parseExpression = Template.sole();
 var pro = Template.prototype;
 
 
@@ -452,80 +527,6 @@ var initDirectives = function (directives) {
 };
 
 
-/**
- * 解析表达式
- * @param expression
- * @param scape
- * @returns {String}
- */
-pro[_parseExpression] = function (expression, scape) {
-    var the = this;
-    var tokens = new Lexer(expression).lex();
-    var index = 0;
-    var token = tokens[index++];
-    var exp = '';
-    var expList = [];
-    var inExp = false;
-    var expStart = false;
-    var isOriginal = false;
-
-    while (token.type !== 'EOF') {
-        var value = token.value;
-
-        switch (token.type) {
-            case 'EXPR_OPEN':
-                inExp = true;
-                isOriginal = false;
-                expStart = true;
-                // 表达式使用括号包裹 开始
-                exp = '(';
-                break;
-
-            case 'END':
-                inExp = false;
-
-                if (!isOriginal && scape) {
-                    exp += ')';
-                }
-
-                // 表达式使用括号包裹 结束
-                exp += ')';
-                expList.push(exp);
-                break;
-
-            case 'TEXT':
-                expList.push(textify(value));
-                break;
-
-            case 'STRING':
-                exp += textify(value);
-                break;
-
-            default:
-                if (inExp) {
-                    if (expStart) {
-                        value = value.replace(reOriginal, function () {
-                            isOriginal = true;
-                            return '';
-                        });
-
-                        if (!isOriginal && scape) {
-                            exp += the[_thisName] + '.escape(';
-                        }
-                    }
-
-                    exp += value;
-                    expStart = false;
-                } else {
-                    expList.push(textify(value));
-                }
-                break;
-        }
-        token = tokens[index++];
-    }
-
-    return expList.join(' + ');
-};
 
 
 /**
@@ -823,7 +824,7 @@ pro[_compileAttrs] = function (vnode) {
 
         // 表达式求值
         if (reExpression.test(value) && value !== true) {
-            value = the[_parseExpression](value, false);
+            value = the.parseExpression(value, false);
 
             // 布尔属性
             if (booleanAttrMap[name]) {
