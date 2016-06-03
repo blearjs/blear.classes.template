@@ -479,4 +479,14 @@ describe('测试文件', function () {
         var html = tpl.render(data);
         expect(html).toEqual('<li>2</li>');
     });
+
+    it('.isExpression', function () {
+        expect(Template.isExpression('a')).toEqual(false);
+        expect(Template.isExpression('{{a}}')).toEqual(true);
+    });
+
+    it('.textify', function () {
+        expect(Template.textify('a')).toEqual('"a"');
+        expect(Template.textify('"a"')).toEqual('"\\"a\\""');
+    });
 });
