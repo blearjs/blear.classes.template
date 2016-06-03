@@ -803,11 +803,11 @@ pro[_compileAttrs] = function (vnode) {
     var arttsList = [];
     var attrs = vnode.attrs;
 
-    vnode.attrs['class'] = vnode.attrs['class'];
     // class=" + (class1 ? "class1" : "") + "class2" +"
     //           ^^^                         ^^^
     //           表达式求值                    常量
     object.each(vnode.classMap, function (value, exp) {
+        vnode.attrs['class'] = (' ' + vnode.attrs['class'] + ' ').replace(' ' + value + ' ', '');
         vnode.attrs['class'] += ' {{(Boolean(' + exp + ') ? " ' + value + '" : "")}}';
     });
 
