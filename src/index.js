@@ -632,7 +632,7 @@ pro[_TAG_OPEN] = function (token) {
             case 'NAME':
                 if (lastName) {
                     // 布尔值
-                    attrs[lastName] = lastName;
+                    attrs[lastName] = true;
                     lastName = '';
                 }
 
@@ -664,7 +664,7 @@ pro[_TAG_OPEN] = function (token) {
                     };
                 }
                 else {
-                    attrs[lastName] = value;
+                    attrs[lastName] = value || (booleanAttrMap[lastName] ? '{{true}}' : '');
                 }
 
                 lastName = '';
