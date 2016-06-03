@@ -962,7 +962,8 @@ Template.directive('class', BASE_PRIORITY / 10, require('./_directives/class.js'
 Template.directive('style', BASE_PRIORITY / 10 - 1, require('./_directives/style.js'));
 Template.directive('order', BASE_PRIORITY / 100, require('./_directives/order.js'));
 Template.directive('for', BASE_PRIORITY / 100 - 1, require('./_directives/for.js'));
-Template.directive('filter', BASE_PRIORITY / 100 - 2, require('./_directives/filter.js'));
+Template.directive('limit', BASE_PRIORITY / 100 - 2, require('./_directives/limit.js'));
+Template.directive('filter', BASE_PRIORITY / 100 - 3, require('./_directives/filter.js'));
 
 Template.statement('if', require('./_statements/if.js'));
 Template.statement('else', require('./_statements/else.js'));

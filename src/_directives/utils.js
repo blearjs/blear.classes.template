@@ -60,13 +60,13 @@ exports.str2Obj = function (str) {
  * @returns {*[]}
  */
 exports.parseFor = function (str) {
-    var forInList = str.split(' in ');
+    var forInList = string.trim(str).split(' in ');
     var keyValName = forInList[0];
     var keyValList = keyValName.split(',');
 
     var valName = keyValList.pop();
-    var keyName = keyValList.pop() || '__index__';
+    var indexName = string.trim(keyValList.pop() || '') || '__index__';
     var listName = forInList[1];
 
-    return [keyName, valName, listName];
+    return [indexName, valName, listName];
 };

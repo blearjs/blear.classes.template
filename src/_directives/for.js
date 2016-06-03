@@ -14,17 +14,17 @@ var utils = require('./utils');
 // val in list
 module.exports = function (vnode, directive) {
     var ret = utils.parseFor(directive.value);
-    var keyName = ret[0];
+    var indexName = ret[0];
     var valName = ret[1];
     var listName = ret[2];
     var beforeList = [
-        this.thisName() + '.each(' + listName + ', function (' + keyName + ', ' + valName + ') {'
+        this.thisName() + '.each(' + listName + ', function (' + indexName + ', ' + valName + ') {'
     ];
     var afterList = [
         '});'
     ];
 
-    directive.keyName = keyName;
+    directive.indexName = indexName;
     directive.valName = valName;
     directive.listName = listName;
 

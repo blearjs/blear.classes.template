@@ -27,7 +27,7 @@ module.exports = function (vnode, directive) {
         return ['', ''];
     }
 
-    var orderInfoList = directive.value.split(' ');
+    var orderInfoList = string.trim(directive.value).split(' ');
     var orderName = string.trim(orderInfoList[0]).split('.');
     var orderValue = number.parseInt(string.trim(orderInfoList[1] || '1'), 1);
     var thisName = this.thisName();
@@ -43,11 +43,11 @@ module.exports = function (vnode, directive) {
     orderName = orderName.join('.');
 
     var ret = utils.parseFor(forDirective.value);
-    var keyName = ret[0];
+    var indexName = ret[0];
     var valName = ret[1];
     var listName = ret[2];
 
-    forDirective.value = keyName + ',' + valName + ' in ' + orderedListName;
+    forDirective.value = indexName + ',' + valName + ' in ' + orderedListName;
 
     return [
         [
