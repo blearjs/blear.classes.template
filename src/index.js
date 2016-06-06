@@ -201,35 +201,57 @@ var Template = Events.extend({
         var the = this;
         var compilerStrList = [];
         var compile = function (children) {
-            var _compilerStrList = [];
+            var blockList = [];
+            var spliceWhich = function (index, whiches) {
+                while (index--) {
+                    var found = false;
+
+                    array.each(whiches, function (_, which) {
+                        if (children[index].directives && children[index].directives[which]) {
+                            found = true;
+                            return false;
+                        }
+                    });
+
+                    if (found) {
+                        break;
+                    }
+
+                    blockList.splice(index, 1);
+                }
+            };
 
             array.each(children, function (index, child) {
                 var directiveRet = ['', ''];
+                var sliceList = [];
+
                 switch (child.type) {
                     case 'el':
+                        if (child.directives['else']) {
+                            spliceWhich(index, ['if']);
+                        } else if (child.directives['else-if']) {
+                            spliceWhich(index, ['if', 'else-if']);
+                        }
+
                         var htmlStart = '<' + child.tag;
                         var htmlEnd = '</' + child.tag + '>';
-                        directiveRet = the[_compileDirectives](child, _compilerStrList);
-                        var htmlAttrs = the[_compileAttrs](child, _compilerStrList);
-                        the.emit('beforeCompileElement', _compilerStrList);
-                        _compilerStrList.push(directiveRet[0] + '');
-                        _compilerStrList.push(the[_outputName] + ' += ' + textify(htmlStart) + ';');
-                        _compilerStrList.push(htmlAttrs);
-                        _compilerStrList.push(the[_outputName] + ' += ">";');
+                        directiveRet = the[_compileDirectives](child);
+                        var htmlAttrs = the[_compileAttrs](child);
+                        sliceList.push(directiveRet[0] + '');
+                        sliceList.push(the[_outputName] + ' += ' + textify(htmlStart) + ';');
+                        sliceList.push(htmlAttrs);
+                        sliceList.push(the[_outputName] + ' += ">";');
 
                         // 非自闭标签
                         if (child.children) {
-                            _compilerStrList.push(compile(child.children));
-                            _compilerStrList.push(the[_outputName] + ' += ' + textify(htmlEnd) + ';');
+                            sliceList.push(compile(child.children));
+                            sliceList.push(the[_outputName] + ' += ' + textify(htmlEnd) + ';');
                         }
 
-                        the.emit('afterCompileElement', _compilerStrList);
                         break;
 
                     case 'text':
-                        the.emit('beforeCompileText', _compilerStrList);
-                        _compilerStrList.push(the[_outputName] + ' += ' + textify(child.value) + ';');
-                        the.emit('afterCompileText', _compilerStrList);
+                        sliceList.push(the[_outputName] + ' += ' + textify(child.value) + ';');
                         break;
 
                     case 'exp':
@@ -243,19 +265,18 @@ var Template = Events.extend({
                             value = the[_thisName] + '.escape(' + value + ')';
                         }
 
-                        the.emit('beforeCompileExpression', _compilerStrList);
-                        _compilerStrList.push(the[_outputName] + ' += ' + value + ';');
-                        the.emit('afterCompileExpression', _compilerStrList);
+                        sliceList.push(the[_outputName] + ' += ' + value + ';');
                         break;
 
                     case 'statement':
-                        _compilerStrList.push(the[_compileStatement](child));
+                        sliceList.push(the[_compileStatement](child));
                         break;
                 }
-                _compilerStrList.push(directiveRet[1]);
+                sliceList.push(directiveRet[1]);
+                blockList.push(sliceList.join('\n'));
             });
 
-            return _compilerStrList.join('\n');
+            return blockList.join('\n');
         };
 
         var evalStr = generateVarName();

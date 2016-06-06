@@ -235,7 +235,7 @@ describe('测试文件', function () {
     });
 
     it('@else', function () {
-        var str = '<div @if="a"></div><p @else></p>';
+        var str = '<div @if="a"></div> <p @else></p>';
         var data = {
             a: 0
         };
@@ -246,7 +246,7 @@ describe('测试文件', function () {
     });
 
     it('@else-if', function () {
-        var str = '<div @if="a"></div><p @else-if="b"></p>';
+        var str = '<div @if="a"></div> <p @else-if="b"></p>';
         var data = {
             a: 0,
             b: 1
@@ -258,7 +258,7 @@ describe('测试文件', function () {
     });
 
     it('@if @else-if @else', function () {
-        var str = '<div @if="a"></div><p @else-if="b"></p><a @else></a>';
+        var str = '<div @if="a"></div> <p @else-if="b"></p> <a @else></a>';
         var data = {
             a: 0,
             b: 0
