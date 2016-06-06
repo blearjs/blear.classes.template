@@ -678,7 +678,15 @@ pro[_TAG_OPEN] = function (token) {
     }
 
     if (lastName) {
-        attrs[lastName] = true;
+        if (isDirective) {
+            directives[lastName] = {
+                name: lastName,
+                value: true,
+                filters: []
+            };
+        } else {
+            attrs[lastName] = true;
+        }
     }
 
     var isSingle = singleTagMap[tag];
@@ -967,7 +975,9 @@ Template.isExpression = function (value) {
 
 var BASE_PRIORITY = 10000;
 Template.directive('if', BASE_PRIORITY, require('./_directives/if.js'));
-Template.directive('show', BASE_PRIORITY - 1, require('./_directives/show.js'));
+Template.directive('else-if', BASE_PRIORITY - 1, require('./_directives/else-if.js'));
+Template.directive('else', BASE_PRIORITY - 2, require('./_directives/else.js'));
+Template.directive('show', BASE_PRIORITY - 3, require('./_directives/show.js'));
 Template.directive('class', BASE_PRIORITY / 10, require('./_directives/class.js'));
 Template.directive('style', BASE_PRIORITY / 10 - 1, require('./_directives/style.js'));
 Template.directive('order', BASE_PRIORITY / 100, require('./_directives/order.js'));
