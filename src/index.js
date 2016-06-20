@@ -801,7 +801,15 @@ pro[_STATEMENT_OPEN] = function () {
     token = the[_next]();
 
     while (token.type !== 'END') {
-        values.push(token.value);
+        var _value = token.value;
+
+        switch (token.type) {
+            case 'STRING':
+                _value = textify(_value);
+                break;
+        }
+
+        values.push(_value);
         token = the[_next]();
     }
 

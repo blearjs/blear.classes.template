@@ -160,7 +160,7 @@ describe('测试文件', function () {
     });
 
     it('#if', function (done) {
-        var str1 = '{{#if varible}}if{{/if}}';
+        var str1 = '{{#if varible === "<b>"}}if{{/if}}';
         var tpl = new Template(str1);
         var data = {
             varible: '<b>'
