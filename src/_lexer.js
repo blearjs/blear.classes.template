@@ -20,7 +20,7 @@ var trackErrorPos = (function () {
                 return {num: i, line: lines[i], start: pos - 1 - tmpLen, prev: lines[i - 1], next: lines[i + 1]};
             }
             // 1 is for the linebreak
-            tmpLen = tmpLen + lineLen;
+            tmpLen += lineLen + 1;
         }
     }
 
