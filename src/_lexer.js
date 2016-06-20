@@ -17,7 +17,7 @@ var trackErrorPos = (function () {
             var lineLen = (lines[i] || "").length;
 
             if (tmpLen + lineLen > pos) {
-                return {num: i, line: lines[i], start: pos - i - tmpLen, prev: lines[i - 1], next: lines[i + 1]};
+                return {num: i, line: lines[i], start: pos - 1 - tmpLen, prev: lines[i - 1], next: lines[i + 1]};
             }
             // 1 is for the linebreak
             tmpLen = tmpLen + lineLen;
