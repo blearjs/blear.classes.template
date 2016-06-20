@@ -31,6 +31,6 @@ module.exports = function (vnode) {
         'if (typeof ' + varible + ' === "undefined") {',
         '  var ' + varible + ' = null;',
         '}',
-        value
+        ';' + value + ';'
     ].join('\n');
 };

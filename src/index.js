@@ -648,15 +648,30 @@ pro[_TAG_OPEN] = function (token) {
     var isDirective = false;
     var directiveName;
 
+    var push = function () {
+        if (!lastName) {
+            return;
+        }
+
+        if (isDirective) {
+            directives[lastName] = {
+                name: lastName,
+                value: true,
+                filters: []
+            };
+        } else {
+            attrs[lastName] = true;
+        }
+
+        isDirective = false;
+        lastName = '';
+    };
+
+
     while (type !== '>') {
         switch (type) {
             case 'NAME':
-                if (lastName) {
-                    // 布尔值
-                    attrs[lastName] = true;
-                    lastName = '';
-                }
-
+                push();
                 lastName = value;
                 // 指令
                 directiveName = lastName.replace(reDirective, function () {
@@ -683,8 +698,7 @@ pro[_TAG_OPEN] = function (token) {
                         value: value,
                         filters: directiveList
                     };
-                }
-                else {
+                } else {
                     attrs[lastName] = value || (booleanAttrMap[lastName] ? '{{true}}' : '');
                 }
 
@@ -698,17 +712,7 @@ pro[_TAG_OPEN] = function (token) {
         value = token.value;
     }
 
-    if (lastName) {
-        if (isDirective) {
-            directives[lastName] = {
-                name: lastName,
-                value: true,
-                filters: []
-            };
-        } else {
-            attrs[lastName] = true;
-        }
-    }
+    push();
 
     var isSingle = singleTagMap[tag];
     var ret = {
