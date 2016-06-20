@@ -85,6 +85,8 @@ tpl.render(data);
 ### 判断
 ```
 <li @if="exp"></li>
+<li @else-if="exp"></li>
+<li @else></li>
 ```
 
 ### 属性
