@@ -37,7 +37,6 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "blear.shims.lexer": "1.x",
     "blear.classes.events": "1.x",
     "blear.utils.object": "1.x",
     "blear.utils.array": "1.x",

@@ -9,7 +9,6 @@
 'use strict';
 
 
-var Lexer = require('blear.shims.lexer');
 var Events = require('blear.classes.events');
 var object = require('blear.utils.object');
 var array = require('blear.utils.array');
@@ -20,6 +19,8 @@ var json = require('blear.utils.json');
 var fun = require('blear.utils.function');
 var random = require('blear.utils.random');
 var typeis = require('blear.utils.typeis');
+
+var Lexer = require('./_lexer');
 
 
 var staticDirectives = {};
@@ -40,11 +41,10 @@ var reIgnore = /\{\{#ignore}}([\s\S]*?)\{\{\/ignore}}/;
  * @returns {{}}
  */
 var list2Map = function (list) {
-    var map = {};
-    array.each(list, function (index, item) {
-        map[item] = 1;
-    });
-    return map;
+    return array.reduce(list, function (prev, now) {
+        prev[now] = true;
+        return prev;
+    }, {});
 };
 
 var singleTagList = "area base br col doctype embed hr img input keygen link menuitem meta param source track wbr".split(' ');
@@ -95,6 +95,12 @@ var defaults = {
      * @type Boolean
      */
     compress: true,
+
+    /**
+     * 是否保留注释
+     * @type Boolean
+     */
+    comment: false,
 
     /**
      * 是否调试模式，如果是，将插入 `debugger` 到编译后的函数内
@@ -199,6 +205,7 @@ var Template = Events.extend({
      */
     compile: function () {
         var the = this;
+        var options = the[_options];
         var compilerStrList = [];
         var compile = function (children) {
             var blockList = [];
@@ -271,6 +278,12 @@ var Template = Events.extend({
                     case 'statement':
                         sliceList.push(the[_compileStatement](child));
                         break;
+
+                    case 'comment':
+                        if (options.comment) {
+                            sliceList.push(the[_outputName] + ' += ' + textify(child.value) + ';');
+                        }
+                        break;
                 }
                 sliceList.push(directiveRet[1]);
                 blockList.push(sliceList.join('\n'));
@@ -282,7 +295,7 @@ var Template = Events.extend({
         var evalStr = generateVarName();
         var forKeyName = generateVarName();
 
-        if (the[_options].debug) {
+        if (options.debug) {
             compilerStrList.push('debugger;');
         }
 
@@ -497,6 +510,7 @@ var _TEXT = Template.sole();
 var _TAG_OPEN = Template.sole();
 var _EXPR_OPEN = Template.sole();
 var _STATEMENT_OPEN = Template.sole();
+var _COMMENT = Template.sole();
 // \{{varible}}
 var _inText = Template.sole();
 var _compileAttrs = Template.sole();
@@ -516,7 +530,7 @@ var pro = Template.prototype;
 /**
  * 处理 ignore
  * @param template
- * @returns {void|*|string|XML}
+ * @returns {String}
  */
 pro[_processIgnoreStatement] = function (template) {
     var the = this;
@@ -604,6 +618,9 @@ pro[_program] = function () {
         case 'OPEN':
         case 'CLOSE':
             return the[_STATEMENT_OPEN](token);
+
+        case 'COMMENT':
+            return the[_COMMENT](token);
 
         default:
             throw new SyntaxError('未知 token' + token);
@@ -821,6 +838,16 @@ pro[_STATEMENT_OPEN] = function () {
     return statement;
 };
 
+
+pro[_COMMENT] = function () {
+    var the = this;
+    var token = the[_next](0);
+
+    return {
+        type: 'comment',
+        value: token.value
+    };
+};
 
 /**
  * 下一步
