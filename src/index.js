@@ -874,11 +874,12 @@ pro[_compileAttrs] = function (vnode) {
     //           ^^^                         ^^^
     //           表达式求值                    常量
     object.each(vnode.classMap, function (value, exp) {
-        vnode.attrs['class'] = (' ' + vnode.attrs['class'] + ' ').replace(' ' + value + ' ', '');
+        vnode.attrs['class'] = (' ' + (vnode.attrs['class'] || '') + ' ').replace(' ' + value + ' ', '');
         vnode.attrs['class'] += ' {{(Boolean(' + exp + ') ? " ' + value + '" : "")}}';
     });
 
     // style=" + ("font-size:" + fontSize + "px;")
+    vnode.attrs.style = vnode.attrs.style || '';
     object.each(vnode.styleMap, function (value, exp) {
         vnode.attrs.style += ' {{(";' + value + ':" + ' + exp + ' + ";")}}';
     });
