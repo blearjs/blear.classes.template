@@ -537,7 +537,7 @@ pro[_processIgnoreStatement] = function (template) {
 
     return template.replace(reIgnore, function (source, original) {
         var key = IGNORE_SEP + random.guid() + IGNORE_SEP;
-        the[_temporary][key] = original;
+        the[_temporary][key] = original.replace(/\$/g, '$$$$');
         return key;
     });
 };
