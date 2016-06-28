@@ -27,7 +27,8 @@ var staticDirectives = {};
 var staticStatements = {};
 var reOriginal = /^=/;
 var reSafeKey = /^[a-z_$][a-z\d$_]*$/i;
-var reUnExp = /\\$/;
+var reUnExp = /([^\\]|^)\\$/;
+var reDoubleBackSlash = /\\\\$/;
 var IGNORE_SEP = '•';
 var reStatement = /^#/;
 var reDirective = /^@/;
@@ -435,12 +436,18 @@ var Template = Events.extend({
         var inExp = false;
         var expStart = false;
         var isOriginal = false;
+        var inUnExp = false;
 
         while (token.type !== 'EOF') {
             var value = token.value;
 
             switch (token.type) {
                 case 'EXPR_OPEN':
+                    if (inUnExp) {
+                        expList.push(textify('{{'));
+                        break;
+                    }
+
                     inExp = true;
                     isOriginal = false;
                     expStart = true;
@@ -449,6 +456,12 @@ var Template = Events.extend({
                     break;
 
                 case 'END':
+                    if (inUnExp) {
+                        inUnExp = false;
+                        expList.push(textify('}}'));
+                        break;
+                    }
+
                     inExp = false;
 
                     if (!isOriginal && scape) {
@@ -461,6 +474,14 @@ var Template = Events.extend({
                     break;
 
                 case 'TEXT':
+                    inUnExp = reUnExp.test(value);
+
+                    if (inUnExp) {
+                        value = value.slice(0, -1);
+                    } else {
+                        value = value.replace(reDoubleBackSlash, '\\');
+                    }
+
                     expList.push(textify(value));
                     break;
 
@@ -574,9 +595,15 @@ pro[_parse] = function () {
     while (token && token.type !== 'EOF' && token.type !== 'TAG_CLOSE') {
         var slice = the[_program]();
 
-        if (slice.type === 'text' && reUnExp.test(slice.value)) {
-            the[_inText] = true;
-            slice.value = slice.value.slice(0, -1);
+        if (slice.type === 'text') {
+            // 反斜杆
+            if (reUnExp.test(slice.value)) {
+                slice.value = slice.value.slice(0, -1);
+                the[_inText] = true;
+            } else {
+                slice.value = slice.value.replace(reDoubleBackSlash, '\\');
+            }
+
             slices.push(slice);
             token = the[_next]();
             continue;
