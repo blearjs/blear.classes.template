@@ -15,7 +15,6 @@ var array = require('blear.utils.array');
 var collection = require('blear.utils.collection');
 var number = require('blear.utils.number');
 var string = require('blear.utils.string');
-var json = require('blear.utils.json');
 var fun = require('blear.utils.function');
 var random = require('blear.utils.random');
 var typeis = require('blear.utils.typeis');
