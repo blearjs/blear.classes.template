@@ -27,7 +27,7 @@ var staticDirectives = {};
 var staticStatements = {};
 var reOriginal = /^=/;
 var reSafeKey = /^[a-z_$][a-z\d$_]*$/i;
-var reUnExp = /([^\\]|^)\\$/;
+var reUnExp = /\\$/;
 var reDoubleBackSlash = /\\\\$/;
 var IGNORE_SEP = '•';
 var reStatement = /^#/;
@@ -68,19 +68,17 @@ var generateVarName = (function () {
 /**
  * 字符化，双引号
  * @param value
+ * @param noQuote
  */
-var textify = (function () {
-    var reStart = /^.*?:/;
-    var reEnd = /}$/;
+var textify = function (value, noQuote) {
+    var ret = string.textify(value);
 
-    return function textify(value) {
-        var o = {
-            p: String(value)
-        };
+    if (noQuote) {
+        return ret;
+    }
 
-        return json.stringify(o).replace(reStart, '').replace(reEnd, '');
-    };
-}());
+    return '"' + ret + '"';
+};
 
 var STATIC_METHODS = {};
 
@@ -474,12 +472,15 @@ var Template = Events.extend({
                     break;
 
                 case 'TEXT':
+                    if (inUnExp) {
+                        inUnExp = false;
+                        expList[expList.length - 1] += '\\';
+                    }
+
                     inUnExp = reUnExp.test(value);
 
                     if (inUnExp) {
                         value = value.slice(0, -1);
-                    } else {
-                        value = value.replace(reDoubleBackSlash, '\\');
                     }
 
                     expList.push(textify(value));
@@ -532,8 +533,6 @@ var _TAG_OPEN = Template.sole();
 var _EXPR_OPEN = Template.sole();
 var _STATEMENT_OPEN = Template.sole();
 var _COMMENT = Template.sole();
-// \{{varible}}
-var _inText = Template.sole();
 var _compileAttrs = Template.sole();
 var _compileDirectives = Template.sole();
 var _compileStatement = Template.sole();
@@ -591,17 +590,21 @@ pro[_parse] = function () {
     var the = this;
     var slices = [];
     var token = the[_next]();
+    var inUnExp = false;
 
     while (token && token.type !== 'EOF' && token.type !== 'TAG_CLOSE') {
         var slice = the[_program]();
 
         if (slice.type === 'text') {
+            if (inUnExp) {
+                inUnExp = false;
+                slices[slices.length - 1].value += '\\';
+            }
+
             // 反斜杆
             if (reUnExp.test(slice.value)) {
                 slice.value = slice.value.slice(0, -1);
-                the[_inText] = true;
-            } else {
-                slice.value = slice.value.replace(reDoubleBackSlash, '\\');
+                inUnExp = true;
             }
 
             slices.push(slice);
@@ -609,8 +612,8 @@ pro[_parse] = function () {
             continue;
         }
 
-        if (slice.type === 'exp' && the[_inText]) {
-            the[_inText] = false;
+        if (slice.type === 'exp' && inUnExp) {
+            inUnExp = false;
             slice.type = 'text';
             slice.value = '{{' + slice.value + '}}';
             slices.push(slice);
@@ -620,6 +623,10 @@ pro[_parse] = function () {
 
         slices.push(slice);
         token = the[_next]();
+    }
+
+    if (inUnExp) {
+        slices[slices.length - 1].value += '\\';
     }
 
     return slices;
@@ -924,13 +931,13 @@ pro[_compileAttrs] = function (vnode) {
             if (booleanAttrMap[name]) {
                 arttsList.push(the[_outputName] + ' += " " + (Boolean(' + value + ') ? ' + textify(name) + ' : "");');
             } else {
-                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"" + ' + value + ' +"\\"";');
+                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"" + ' + value + ' + "\\"";');
             }
         }
         // 常量
         else {
             if (value && value !== true) {
-                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"' + value + '\\"";');
+                arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ' + "=\\"" + ' + textify(value) + ' + "\\"";');
             } else {
                 arttsList.push(the[_outputName] + ' += " " + ' + textify(name) + ';');
             }

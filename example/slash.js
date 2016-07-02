@@ -17,4 +17,4 @@ console.log(tpl.render({
         remark: '【】'
     }
 }));
-console.log('<p>【】</p><p>{{item.remark}}</p><p>\\【】</p><span a="冻结原因：【】" b="冻结原因：{{item.remark}}" c="冻结原因：\\【】"></span>');
+console.log('<p>\\{{item.remark}}</p>');

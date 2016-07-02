@@ -22,10 +22,8 @@
 <body ontouchstart="">
 
 <script type="text/html" id="demo">
-    <p>{{item.remark}}</p>
-    <p>\{{item.remark}}</p>
-    <p>\\{{item.remark}}</p>
-    <span a="冻结原因：{{item.remark}}" b="冻结原因：\{{item.remark}}" c="冻结原因：\\{{item.remark}}"></span>
+    <p>\\{{item.remark}}{{item.remark}}</p>
+    <p a="\" b="\\" c="\{{item.remark}}{{item.remark}}"></p>
 </script>
 
 <script src="/node_modules/coolie.js/coolie.js"
