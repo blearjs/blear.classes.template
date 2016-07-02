@@ -562,4 +562,46 @@ describe('测试文件', function () {
         expect(Template.textify('a')).toEqual('"a"');
         expect(Template.textify('"a"')).toEqual('"\\"a\\""');
     });
+    
+    it('slash-1', function () {
+        var template = '\\';
+        var tpl = new Template(template);
+        var html = tpl.render({});
+        expect(html).toEqual('\\');
+    });
+    
+    it('slash-2', function () {
+        var template = '\\\\';
+        var tpl = new Template(template);
+        var html = tpl.render({});
+        expect(html).toEqual('\\\\');
+    });
+    
+    it('slash-3', function () {
+        var template = '\\{{a}}';
+        var tpl = new Template(template);
+        var html = tpl.render({});
+        expect(html).toEqual('{{a}}');
+    });
+    
+    it('slash-4', function () {
+        var template = '\\{{a}}{{b}}';
+        var tpl = new Template(template);
+        var html = tpl.render({b: 'xx'});
+        expect(html).toEqual('{{a}}xx');
+    });
+    
+    it('slash-5', function () {
+        var template = '<p a="\\"></p>';
+        var tpl = new Template(template);
+        var html = tpl.render({b: 'xx'});
+        expect(html).toEqual('<p a="\\"></p>');
+    });
+
+    it('slash-6', function () {
+        var template = '<p a="\\" b="\\d"></p>';
+        var tpl = new Template(template);
+        var html = tpl.render({b: 'xx'});
+        expect(html).toEqual('<p a="\\" b="\\d"></p>');
+    });
 });
