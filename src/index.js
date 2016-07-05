@@ -793,6 +793,7 @@ pro[_TAG_OPEN] = function (token) {
 pro[_EXPR_OPEN] = function () {
     var the = this;
     var token = the[_next]();
+    var lastToken;
 
     // 半个空值表达式，忽略之
     if (token.type === 'EXPR_OPEN') {
@@ -810,7 +811,9 @@ pro[_EXPR_OPEN] = function () {
             token.value = textify(token.value);
         }
 
+        value += lastToken && lastToken.type === 'IDENT' && token.type === lastToken.type ? ' ' : '';
         value += token.value;
+        lastToken = token;
         token = the[_next]();
 
         // {{varible
