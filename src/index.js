@@ -32,7 +32,8 @@ var IGNORE_SEP = '•';
 var reStatement = /^#/;
 var reDirective = /^@/;
 var reExpression = /\{\{.*?}}/;
-var reIgnore = /\{\{#ignore}}([\s\S]*?)\{\{\/ignore}}/;
+var reIgnore = /\{\{#ignore}}([\s\S]*?)\{\{\/ignore}}/g;
+var reSlash = /\\\{\{.*?}}/g;
 
 
 /**
@@ -124,6 +125,8 @@ var Template = Events.extend({
         the[_directivesList] = initDirectives(the[_directives]);
         the[_temporary] = {};
         template = the[_processIgnoreStatement](template);
+        template = the[_processSlashStatement](template);
+        console.log(template);
         the[_tokens] = new Lexer(template).lex();
 
         if (typeof DEBUG !== 'undefined' && DEBUG === true) {
@@ -433,18 +436,12 @@ var Template = Events.extend({
         var inExp = false;
         var expStart = false;
         var isOriginal = false;
-        var inUnExp = false;
 
         while (token.type !== 'EOF') {
             var value = token.value;
 
             switch (token.type) {
                 case 'EXPR_OPEN':
-                    if (inUnExp) {
-                        expList.push(textify('{{'));
-                        break;
-                    }
-
                     inExp = true;
                     isOriginal = false;
                     expStart = true;
@@ -453,12 +450,6 @@ var Template = Events.extend({
                     break;
 
                 case 'END':
-                    if (inUnExp) {
-                        inUnExp = false;
-                        expList.push(textify('}}'));
-                        break;
-                    }
-
                     inExp = false;
 
                     if (!isOriginal && scape) {
@@ -471,17 +462,6 @@ var Template = Events.extend({
                     break;
 
                 case 'TEXT':
-                    if (inUnExp) {
-                        inUnExp = false;
-                        expList[expList.length - 1] += '\\';
-                    }
-
-                    inUnExp = reUnExp.test(value);
-
-                    if (inUnExp) {
-                        value = value.slice(0, -1);
-                    }
-
                     expList.push(textify(value));
                     break;
 
@@ -537,6 +517,7 @@ var _compileDirectives = Template.sole();
 var _compileStatement = Template.sole();
 var _temporary = Template.sole();
 var _processIgnoreStatement = Template.sole();
+var _processSlashStatement = Template.sole();
 var _compiler = Template.sole();
 var _outputName = Template.sole();
 var _thisName = Template.sole();
@@ -556,6 +537,23 @@ pro[_processIgnoreStatement] = function (template) {
 
     return template.replace(reIgnore, function (source, original) {
         var key = IGNORE_SEP + random.guid() + IGNORE_SEP;
+        the[_temporary][key] = original.replace(/\$/g, '$$$$');
+        return key;
+    });
+};
+
+
+/**
+ * 处理 \
+ * @param template
+ * @returns {String}
+ */
+pro[_processSlashStatement] = function (template) {
+    var the = this;
+
+    return template.replace(reSlash, function (source) {
+        var key = IGNORE_SEP + random.guid() + IGNORE_SEP;
+        var original = source.slice(1);
         the[_temporary][key] = original.replace(/\$/g, '$$$$');
         return key;
     });
@@ -589,32 +587,11 @@ pro[_parse] = function () {
     var the = this;
     var slices = [];
     var token = the[_next]();
-    var inUnExp = false;
 
     while (token && token.type !== 'EOF' && token.type !== 'TAG_CLOSE') {
         var slice = the[_program]();
 
         if (slice.type === 'text') {
-            if (inUnExp) {
-                inUnExp = false;
-                slices[slices.length - 1].value += '\\';
-            }
-
-            // 反斜杆
-            if (reUnExp.test(slice.value)) {
-                slice.value = slice.value.slice(0, -1);
-                inUnExp = true;
-            }
-
-            slices.push(slice);
-            token = the[_next]();
-            continue;
-        }
-
-        if (slice.type === 'exp' && inUnExp) {
-            inUnExp = false;
-            slice.type = 'text';
-            slice.value = '{{' + slice.value + '}}';
             slices.push(slice);
             token = the[_next]();
             continue;
@@ -622,10 +599,6 @@ pro[_parse] = function () {
 
         slices.push(slice);
         token = the[_next]();
-    }
-
-    if (inUnExp) {
-        slices[slices.length - 1].value += '\\';
     }
 
     return slices;

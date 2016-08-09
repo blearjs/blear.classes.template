@@ -17,4 +17,3 @@ console.log(tpl.render({
         remark: '【】'
     }
 }));
-console.log('<p>\\{{item.remark}}</p>');
