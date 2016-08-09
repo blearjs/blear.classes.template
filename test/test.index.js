@@ -70,15 +70,15 @@ describe('测试文件', function () {
         done();
     });
 
-    it('\\{{varible}}', function (done) {
-        var str1 = '\\{{varible}}';
+    it('\\{{@varible}}', function (done) {
+        var str1 = '\\{{@varible}}';
         var tpl = new Template(str1);
         var data = {
             varible: '<b>'
         };
         var str2 = tpl.render(data);
 
-        expect(str2).toEqual('{{varible}}');
+        expect(str2).toEqual('{{@varible}}');
 
         done();
     });
