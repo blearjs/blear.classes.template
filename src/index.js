@@ -126,7 +126,6 @@ var Template = Events.extend({
         the[_temporary] = {};
         template = the[_processIgnoreStatement](template);
         template = the[_processSlashStatement](template);
-        console.log(template);
         the[_tokens] = new Lexer(template).lex();
 
         if (typeof DEBUG !== 'undefined' && DEBUG === true) {
