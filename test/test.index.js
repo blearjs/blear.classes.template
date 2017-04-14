@@ -346,8 +346,37 @@ describe('测试文件', function () {
         expect(/<b\s+class="a\s+b\s+d">/.test(html)).toEqual(true);
     });
 
+    it(':class 花括号', function () {
+        var str = '<a class="a" :class="{b: c}"></a><b class="a" @class="{b: c, d: e,}"></b>';
+        var data = {
+            c: 1,
+            e: 2
+        };
+        var tpl = new Template(str);
+        var html = tpl.render(data);
+
+        console.log(html);
+        expect(/<a\s+class="a\s+b">/.test(html)).toEqual(true);
+        expect(/<b\s+class="a\s+b\s+d">/.test(html)).toEqual(true);
+    });
+
     it('@style', function () {
         var str = '<a style="a:b" @style="c: d"></a><b style="e:f" @style="g:h,i:j"></b>';
+        var data = {
+            d: 1,
+            h: 2,
+            j: 3
+        };
+        var tpl = new Template(str);
+        var html = tpl.render(data);
+
+        console.log(html);
+        expect(/<a\s+style="a\s*:\s*b(\s*;)+\s*c\s*:\s*1\s*;(\s*;)*">/.test(html)).toEqual(true);
+        expect(/<b\s+style="e\s*:\s*f(\s*;)+\s*g\s*:\s*2(\s*;)+\s*i\s*:\s*3(\s*;)*">/.test(html)).toEqual(true);
+    });
+
+    it(':style 花括号', function () {
+        var str = '<a style="a:b" :style="c: d"></a><b style="e:f" @style="{g:h,i:j}"></b>';
         var data = {
             d: 1,
             h: 2,

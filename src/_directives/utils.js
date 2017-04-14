@@ -21,7 +21,7 @@ var reColon = /:/g;
  * @returns {{}}
  */
 exports.str2Obj = function (str) {
-    var items = str.split(reSeperator);
+    var items = str.replace(/^\s*{|}\s*$/g, '').split(reSeperator);
     var obj = {};
 
     array.each(items, function (index, item) {
