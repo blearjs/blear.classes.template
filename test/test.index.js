@@ -30,7 +30,6 @@ describe('测试文件', function () {
         expect(html).toMatch(/<!\[endif]-->/);
     });
 
-
     it('<!--comment--> false', function () {
         var template = '' +
             '<!DOCTYPE html>\n' +

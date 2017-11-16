@@ -34,6 +34,16 @@ var reDirective = /^[@:]/;
 var reExpression = /\{\{.*?}}/;
 var reIgnore = /\{\{#ignore}}([\s\S]*?)\{\{\/ignore}}/g;
 var reSlash = /\\\{\{.*?}}/g;
+// from coolie-cli
+// var reConditionsCommentsStarts = [
+//     /<!--\[(if|else if|else).*]><!-->/gi,
+//     /<!--\[(if|else if|else).*]>/gi
+// ];
+// var reConditionsCommentsEnds = [
+//     /<!--<!\[endif]-->/gi,
+//     /<!\[endif]-->/gi
+// ];
+var ieConditionRE = /(<!--\[(if|else if|else).*]><!-->)|(<!--\[(if|else if|else).*]>)|(<!--<!\[endif]-->)|(<!\[endif]-->)/i;
 
 
 /**
@@ -127,17 +137,8 @@ var Template = Events.extend({
         template = the[_processIgnoreStatement](template);
         template = the[_processSlashStatement](template);
         the[_tokens] = new Lexer(template).lex();
-
-        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-            console.log('_tokens', the[_tokens]);
-        }
-
         the[_pos] = -1;
         the[_vTemplate] = the[_parse]();
-
-        if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-            console.log('_vTemplate', the[_vTemplate]);
-        }
     },
 
 
@@ -280,7 +281,7 @@ var Template = Events.extend({
                         break;
 
                     case 'comment':
-                        if (options.comment) {
+                        if (options.comment || ieConditionRE.test(child.value)) {
                             sliceList.push(the[_outputName] + ' += ' + textify(child.value) + ';');
                         }
                         break;
@@ -336,15 +337,7 @@ var Template = Events.extend({
         try {
             /* jshint evil: true */
             the[_compiler] = new Function(the[_dataName], the[_methodsName], the[_protectionName], compilerStr);
-
-            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-                console.log('_compiler', the[_compiler]);
-            }
         } catch (err) {
-            if (typeof DEBUG !== 'undefined' && DEBUG === true) {
-                console.log('_compiler', compilerStr);
-            }
-
             throw err;
         }
 
