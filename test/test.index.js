@@ -28,6 +28,7 @@ describe('测试文件', function () {
         expect(html).toMatch(/^ - 文件描述$/m);
         expect(html).toMatch(/<!--\[if IE 8]>/);
         expect(html).toMatch(/<!\[endif]-->/);
+        expect(html).toMatch(/ie8 oldie/i);
     });
 
     it('<!--comment--> false', function () {
@@ -44,9 +45,16 @@ describe('测试文件', function () {
         var html = tpl.render({});
 
         console.log(html);
-        expect(html).toMatch(/^<!doctype html>$/i);
+        expect(html).toMatch(/^<!doctype html>/i);
+        expect(html).toMatch(/ie8 oldie/i);
     });
 
+    it('ie condition comment', function () {
+        var template = '<!--[if !IE]><!-->1<!--<![endif]-->';
+        var tpl = new Template(template);
+        var html = tpl.render({});
+        expect(html).toMatch(/1/);
+    });
 
     it('<!DOCTYPE html>', function () {
         var template = '<!DOCTYPE html><HTML>123</html>';
