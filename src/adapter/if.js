@@ -9,9 +9,11 @@
 'use strict';
 
 var string = require('blear.utils.string');
+var array = require('blear.utils.array');
 
-var conditionList = [];
-var beginSnippet = null;
+var Tree = require('../tree');
+
+var tree = new Tree();
 
 module.exports = function (source, flag, expression) {
     if (flag !== '#' && flag !== '/') {
@@ -33,33 +35,47 @@ module.exports = function (source, flag, expression) {
         snippet: snippet,
         closeCode: '}',
         type: 'if',
-        entity: false,
-        begin: beginSnippet
+        entity: false
     };
 
     switch (method) {
         case 'if':
-            conditionList = [];
             code = 'if(' + condition + '){';
             token.closeCode = null;
-            beginSnippet = snippet;
+            // 树的第一个节点
+            tree.first({
+                snippet: snippet,
+                condition: condition
+            });
             break;
 
         case 'else if':
-            code = 'if(' + condition + '&&!(' + conditionList.join('&&') + ')' + '){';
-            beginSnippet = snippet;
+            code = 'if(' + condition + '&&' + dumpConditions(tree) + '){';
+            tree.next({
+                snippet: snippet,
+                condition: condition
+            });
             break;
 
         case 'else':
-            code = 'if(!(' + conditionList.join('&&') + ')' + '){';
+            code = 'if(' + dumpConditions(tree) + '){';
             break;
 
         // 最后闭合
         default:
+            tree.end();
             break;
     }
 
     token.code = code;
-    conditionList.push(condition);
     return token;
 };
+
+// ====================================
+function dumpConditions(tree) {
+    return array.map(tree.siblings(), function (node) {
+        return '!(' + node.condition + ')';
+    }).join('&&');
+}
+
+

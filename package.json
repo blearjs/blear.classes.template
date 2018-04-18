@@ -36,6 +36,7 @@
     "url": "https://github.com/blearjs/blear.classes.template/issues"
   },
   "dependencies": {
+    "blear.classes.class": "^1.1.7",
     "blear.classes.events": "^1.0.7",
     "blear.utils.array": "^1.0.12",
     "blear.utils.function": "^1.0.5",
