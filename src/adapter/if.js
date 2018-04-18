@@ -20,19 +20,24 @@ module.exports = function (source, flag, expression) {
         return;
     }
 
+    var matches = expression.match(/^(\/?if|else\s+?if|else)\b([\s\S]*)$/);
+
+    if (!matches) {
+        return;
+    }
+
     var snippet = this;
     var closed = flag === '/';
     var code = '';
 
     if (!closed) {
-        var matches = expression.match(/^(if|else\s+?if|else)\b([\s\S]*)$/);
+
         var method = matches[1].replace(/\s+/, ' ');
         var condition = string.trim(matches[2]);
     }
 
     var token = {
         single: false,
-        snippet: snippet,
         closeCode: '}',
         type: 'if',
         entity: false

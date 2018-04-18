@@ -10,6 +10,8 @@
 
 var string = require('blear.utils.string');
 
+var forRE = /^(for)\s+?([\s\S]*?)\s+?in\s+?([\s\S]*?)$/;
+
 var lastFor = null;
 module.exports = function (source, flag, expression) {
     if (flag !== '#' && flag !== '/') {
@@ -17,7 +19,5 @@ module.exports = function (source, flag, expression) {
     }
 
 
-
-
-    return {};
+    return null;
 };

@@ -32,14 +32,14 @@ module.exports = function (err, snippet) {
     var msg = err.message;
     var line = snippet.line;
     var min = Math.max(line - 2, 0);
-    var max = Math.min(line + 3, lines.length - 1);
+    var max = Math.min(line + 2, lines.length - 1);
     var lineNoLength = (max + 1 + '').length + 1;
     var msgList = [];
     var eachLinePadLength = errorLine.length + lineNoLength;
 
     msg = (err.type || err.name) + ': ' + msg.replace(filterNameRE, 'filter ');
 
-    for (; min < max; min++) {
+    for (; min <= max; min++) {
         var content = lines[min];
         var lineNo = min + 1 + '';
 

@@ -22,24 +22,22 @@ module.exports = function (adapters, args) {
         closeCode: '',
         // 实体符
         entity: true,
-        // 片段
-        snippet: snippet,
-        // 起始片段，条件判断等的起始片段不是自己
-        begin: snippet,
         // 是否输出
         echo: false
     };
+    var found = null;
 
     array.each(adapters, function (index, adapter) {
         var ret = adapter.apply(snippet, args);
 
         if (ret) {
+            found = ret;
             object.assign(built, ret);
             return false;
         }
     });
 
-    return built;
+    return found ? built : null;
 };
 
 

@@ -9,6 +9,7 @@
 'use strict';
 
 var string = require('blear.utils.string');
+var collection = require('blear.utils.collection');
 
 exports.escape = string.escapeHTML;
 exports.ify = string.ify;
@@ -25,5 +26,6 @@ exports.push = function (output) {
         lastSlice = slice;
     };
 };
+exports.each = collection.each;
 
 

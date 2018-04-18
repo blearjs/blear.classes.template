@@ -42,7 +42,8 @@ module.exports = function (template) {
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
         return build.call(this, [
             require('./adapter/print'),
-            require('./adapter/if')
+            require('./adapter/if'),
+            require('./adapter/for')
         ], [source, flag, expression]);
     });
     var pushScript = function (script) {
@@ -92,10 +93,14 @@ module.exports = function (template) {
             case 'expression':
                 var expression = snippet.expression;
 
+                if (!expression) {
+                    return;
+                }
+
                 // 自闭合表达式
                 if (expression.single) {
                     wrapTry(expression);
-                    wrapCatch(expression, expression.begin);
+                    wrapCatch(expression, snippet);
                 }
                 // 前后闭合表达式
                 else {
