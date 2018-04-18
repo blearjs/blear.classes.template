@@ -59,24 +59,20 @@ module.exports = function (template) {
         return expression.echo ? pushName + '(' + script + ');' : script + ';'
     };
     var wrapTry = function (expression) {
-        var script = dumpExpression(expression, 'code');
-
-        if (!script) {
+        if (!expression.opened) {
             return;
         }
 
         pushScript('try{');
-        pushScript(script);
+        pushScript(dumpExpression(expression, 'code'));
     };
     var wrapCatch = function (expression, snippet) {
-        var script = dumpExpression(expression, 'closeCode');
-
-        if (script === null) {
+        if (!expression.closed) {
             return;
         }
 
         var errorName = roster.gen();
-        pushScript(script);
+        pushScript(dumpExpression(expression, 'closeCode'));
         pushScript('}catch(' + errorName + '){');
         pushScript('throw ' + accidentName + '(' + errorName + ', ' + wrap(object.filter(snippet, [
             'file', 'line', 'start', 'end'
@@ -97,16 +93,8 @@ module.exports = function (template) {
                     return;
                 }
 
-                // 自闭合表达式
-                if (expression.single) {
-                    wrapTry(expression);
-                    wrapCatch(expression, snippet);
-                }
-                // 前后闭合表达式
-                else {
-                    wrapCatch(expression, expression.begin);
-                    wrapTry(expression);
-                }
+                wrapTry(expression);
+                wrapCatch(expression, expression.begin || snippet);
                 break;
         }
     });

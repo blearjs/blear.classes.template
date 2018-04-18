@@ -37,10 +37,8 @@ module.exports = function (source, flag, expression) {
     }
 
     var token = {
-        single: false,
         closeCode: '}',
-        type: 'if',
-        entity: false
+        type: 'if'
     };
 
     switch (method) {
