@@ -14,12 +14,12 @@ var build = require('./build');
 var syntaxParser = require('./parser/syntax');
 var roster = require('./roster');
 
-var regular = /{{([@#]?)\s*?([\w\W]*?)\s*?}}/;
+var regular = /{{([@#=/]?)\s*?([\w\W]*?)\s*?}}/;
 
 module.exports = function (template) {
     var outputName = roster.output;
     var dataName = roster.data;
-    var entityName = roster.entity;
+    var utilsName = roster.utils;
     var filterName = roster.filter;
     var accidentName = roster.accident;
     var scripts = [
@@ -31,12 +31,14 @@ module.exports = function (template) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
+        'debugger;',
         'var ' + outputName + '="";',
         'with(' + dataName + '){'
     ];
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
         return build([
-            require('./adapter/print')
+            require('./adapter/print'),
+            require('./adapter/if')
         ], [source, flag, expression]);
     });
     var pushScript = function (script) {
@@ -44,8 +46,14 @@ module.exports = function (template) {
     };
     var wrapTry = function (snippet) {
         var errorName = roster.gen();
+        var code = snippet.expression.code;
+
+        if (!code) {
+            return;
+        }
+
         pushScript('try{');
-        pushScript(snippet.expression.code);
+        pushScript(code);
         pushScript('}catch(' + errorName + '){');
         pushScript(errorName + '.snippet=' + JSON.stringify(snippet) + ';');
         pushScript('throw ' + accidentName + '(' + errorName + ');');
@@ -66,7 +74,7 @@ module.exports = function (template) {
     pushScript('}');
     pushScript('return ' + outputName + ';');
 
-    var fn = new Function(dataName, entityName, filterName, accidentName, scripts.join('\n'));
+    var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));
     fn.snippets = snippets;
     return fn;
 };
@@ -74,14 +82,4 @@ module.exports = function (template) {
 // =========================================
 function wrap(code) {
     return JSON.stringify(code);
-}
-
-function beautyError(snippet) {
-    var lineNo = snippet.line + 1;
-    var msgs = [
-        '错误在第' + lineNo + '行表达式：',
-        snippet.value,
-        ''
-    ];
-    return wrap(msgs.join('\n'));
 }

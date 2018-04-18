@@ -11,14 +11,14 @@
 var Events = require('blear.classes.events');
 var fun = require('blear.utils.function');
 var object = require('blear.utils.object');
+var string = require('blear.utils.string');
 
 var compiler = require('./compiler');
 var accident = require('./accident');
+var utils = require('./utils');
 
-var defaults = {
-    start: '{{',
-    end: '}}'
-};
+var defaults = {};
+var filters = {};
 var Template = Events.extend({
     constructor: function (template, options) {
         var the = this;
@@ -31,13 +31,7 @@ var Template = Events.extend({
         var the = this;
 
         try {
-            return the[_tpl].call(data, data, function (code) {
-                return code;
-            }, {
-                c: function (code) {
-                    return code;
-                }
-            }, fun.bind(accident, the[_tpl].snippets));
+            return the[_tpl].call(data, data, utils, filters, fun.bind(accident, the[_tpl].snippets));
         } catch (err) {
             return '<pre>' + err.message + '</pre>';
         }
@@ -48,6 +42,9 @@ var _options = sole();
 var _tpl = sole();
 
 Template.defaults = defaults;
+Template.filter = function (name, filter) {
+    filters[name] = filter;
+};
 module.exports = Template;
 
 

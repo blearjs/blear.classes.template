@@ -31,24 +31,6 @@ describe('测试文件', function () {
         expect(html).toMatch(/ie8 oldie/i);
     });
 
-    it('<!--comment--> false', function () {
-        var template = '' +
-            '<!DOCTYPE html>\n' +
-            '<!--\n' +
-            ' - 文件描述\n' +
-            ' - @author ydr.me\n' +
-            ' -->\n' +
-            '<!--[if IE 8]><html class="ie8 oldie" lang="zh-Hans"><![endif]-->\n';
-        var tpl = new Template(template, {
-            comment: false
-        });
-        var html = tpl.render({});
-
-        console.log(html);
-        expect(html).toMatch(/^<!doctype html>/i);
-        expect(html).toMatch(/ie8 oldie/i);
-    });
-
     it('ie condition comment', function () {
         var template = '<!--[if !IE]><!-->1<!--<![endif]-->';
         var tpl = new Template(template);
@@ -58,10 +40,9 @@ describe('测试文件', function () {
 
     it('<!DOCTYPE html>', function () {
         var template = '<!DOCTYPE html><HTML>123</html>';
-        var template2 = '<!doctype html><html>123</html>';
         var tpl = new Template(template);
         var html = tpl.render({});
-        expect(html).toEqual(template2);
+        expect(html).toEqual(template);
     });
 
     it('{{varible}}', function (done) {

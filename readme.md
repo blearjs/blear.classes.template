@@ -1,4 +1,4 @@
-# blear.classes.template 指令类型模板引擎
+# blear.classes.template 字符串编译型模板引擎
 
 <https://blear.ydr.me/classes/template>
 

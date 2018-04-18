@@ -14,6 +14,11 @@ var expressionParser = require('../parser/expression');
 var roster = require('../roster');
 
 module.exports = function (source, flag, expression) {
+    if (flag === '#' || flag === '/') {
+        return;
+    }
+
+    var unescape = flag === '=';
     var tokens = expressionParser(expression);
     var piping = false;
     var pipes = [];
@@ -99,14 +104,22 @@ module.exports = function (source, flag, expression) {
     pushArg();
 
     pipes.push({
-        name: roster.entity,
-        single: true,
+        name: 'ify',
+        native: true,
         args: []
     });
 
+    if (!unescape) {
+        pipes.push({
+            name: 'escape',
+            native: true,
+            args: []
+        });
+    }
+
     array.each(pipes, function (index, pipe) {
         pipe.args.unshift(code);
-        code = (pipe.single ? '' : roster.filter + '.') + pipe.name + '(' + pipe.args.join(',') + ')';
+        code = (pipe.native ? roster.utils : roster.filter) + '.' + pipe.name + '(' + pipe.args.join(',') + ')';
     });
 
     return {

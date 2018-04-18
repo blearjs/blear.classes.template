@@ -18,7 +18,7 @@ exports.data = gen();
 /**
  * 输出代码变量
  */
-exports.entity = gen();
+exports.utils = gen();
 
 /**
  * 过滤器代码名称
