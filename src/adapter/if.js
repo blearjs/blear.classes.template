@@ -22,9 +22,7 @@ module.exports = function (source, flag, expression) {
     var closed = flag === '/';
     var code = '';
 
-    if (closed) {
-        conditionList = [];
-    } else {
+    if (!closed) {
         var matches = expression.match(/^(if|else\s+?if|else)\b(.*)$/);
         var method = matches[1].replace(/\s+/, ' ');
         var condition = string.trim(matches[2]);
@@ -41,6 +39,7 @@ module.exports = function (source, flag, expression) {
 
     switch (method) {
         case 'if':
+            conditionList = [];
             code = 'if(' + condition + '){';
             token.closeCode = '';
             beginSnippet = snippet;

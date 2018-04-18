@@ -32,7 +32,7 @@ module.exports = function (template) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        'debugger;',
+        // 'debugger;',
         'var ' + outputName + '="";',
         'with(' + dataName + '){'
     ];
@@ -90,7 +90,6 @@ module.exports = function (template) {
                     wrapCatch(expression, expression.begin);
                     wrapTry(expression);
                 }
-
                 break;
         }
     });

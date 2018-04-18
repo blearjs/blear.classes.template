@@ -10,7 +10,8 @@
 
 var Template = require('../src/index');
 
-var tpl = new Template(require('./base-template.html'));
+var template = require('./base-template.html');
+var tpl = new Template(template);
 
 Template.filter('b', function (code) {
     return 'bbb' + code + 'bbb';
@@ -19,6 +20,8 @@ Template.filter('b', function (code) {
 Template.filter('c', function (code, d, e, f) {
     return e + f + d + code + d + f + e;
 });
+
+document.getElementById('template').value = template;
 
 document.getElementById('ret').innerHTML = tpl.render({
     a: 'Hello',
