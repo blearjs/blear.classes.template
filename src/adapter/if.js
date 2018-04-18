@@ -51,6 +51,7 @@ module.exports = function (source, flag, expression) {
 
         case 'else if':
             code = 'if(' + condition + '&&' + dumpConditions(tree) + '){';
+            token.begin = tree.current().snippet;
             tree.next({
                 snippet: snippet,
                 condition: condition
@@ -58,11 +59,13 @@ module.exports = function (source, flag, expression) {
             break;
 
         case 'else':
+            token.begin = tree.current().snippet;
             code = 'if(' + dumpConditions(tree) + '){';
             break;
 
         // 最后闭合
         default:
+            token.begin = tree.current().snippet;
             tree.end();
             break;
     }

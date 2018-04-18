@@ -11,7 +11,6 @@
 var Events = require('blear.classes.events');
 var fun = require('blear.utils.function');
 var object = require('blear.utils.object');
-var string = require('blear.utils.string');
 
 var compiler = require('./compiler');
 var accident = require('./accident');

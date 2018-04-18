@@ -58,6 +58,15 @@ var Tree = Class.extend({
     end: function () {
         var the = this;
         the[_nextChildren] = the[_currentChildren] = the[_currentChildren].parent;
+    },
+
+    /**
+     * 获取前一个
+     * @returns {*}
+     */
+    current: function () {
+        var the = this;
+        return the[_currentChildren][the[_currentChildren].length - 1].item;
     }
 });
 var sole = Tree.sole;
@@ -66,6 +75,9 @@ var _currentChildren = sole();
 var _nextChildren = sole();
 var _put = sole();
 var prop = Tree.prototype;
+_children = '_children';
+_currentChildren = '_currentChildren';
+_nextChildren = '_nextChildren';
 
 prop[_put] = function (item) {
     var the = this;
