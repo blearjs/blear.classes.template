@@ -14,11 +14,13 @@ var object = require('blear.utils.object');
 module.exports = function (adapters, args) {
     var snippet = this;
     var built = {
+        // 独立
+        single: true,
         code: '',
+        closeCode: ';',
         entity: true,
         snippet: snippet,
-        open: true,
-        closed: true
+        begin: snippet
     };
 
     array.each(adapters, function (index, adapter) {

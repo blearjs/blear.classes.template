@@ -22,12 +22,12 @@ var filterNameRE = new RegExp(string.escapeRegExp(roster.filter + '.'));
 /**
  * 意外处理
  * @param err
+ * @param snippet
  * @returns {*}
  */
-module.exports = function (err) {
+module.exports = function (err, snippet) {
     var snippets = this;
     var lines = snippets.lines;
-    var snippet = err.snippet;
     var msg = err.message;
     var line = snippet.line;
     var min = Math.max(line - 2, 0);

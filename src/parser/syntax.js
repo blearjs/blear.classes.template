@@ -25,7 +25,7 @@ module.exports = function (template, regular, adapter) {
     var start = 0;
     var end = 0;
     var pushSinppet = function (isExpression, value, expression) {
-        snippets.push({
+        var snippet = {
             index: snippets.length,
             type: isExpression ? TYPE_EXPRESSION : TYPE_STRING,
             file: null,
@@ -34,7 +34,9 @@ module.exports = function (template, regular, adapter) {
             start: start,
             end: end,
             line: line
-        });
+        };
+        snippets.push(snippet);
+        return snippet;
     };
     snippets.template = template;
     snippets.lines = template.split(lineRE);
@@ -42,14 +44,11 @@ module.exports = function (template, regular, adapter) {
     for (var step = 0; step < matches.length; step++) {
         var value = matches[step];
         var expressionMatches = value.match(regular);
-
         end += value.length;
+        var snippet = pushSinppet(expressionMatches, value);
 
         if (expressionMatches) {
-            var args = array.from(expressionMatches);
-            pushSinppet(true, value, adapter.apply(null, args));
-        } else {
-            pushSinppet(false, value);
+            snippet.expression = adapter.apply(snippet, array.from(expressionMatches));
         }
 
         line += value.split(lineRE).length - 1;

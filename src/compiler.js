@@ -9,6 +9,7 @@
 'use strict';
 
 var array = require('blear.utils.array');
+var object = require('blear.utils.object');
 
 var build = require('./build');
 var syntaxParser = require('./parser/syntax');
@@ -36,7 +37,7 @@ module.exports = function (template) {
         'with(' + dataName + '){'
     ];
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
-        return build([
+        return build.call(this, [
             require('./adapter/print'),
             require('./adapter/if')
         ], [source, flag, expression]);
@@ -44,19 +45,29 @@ module.exports = function (template) {
     var pushScript = function (script) {
         scripts.push(script);
     };
-    var wrapTry = function (snippet) {
-        var errorName = roster.gen();
-        var code = snippet.expression.code;
+    var wrapTry = function (expression) {
+        var script = expression.code;
 
-        if (!code) {
+        if (!script) {
             return;
         }
 
         pushScript('try{');
-        pushScript(code);
+        pushScript(script);
+    };
+    var wrapCatch = function (expression, snippet) {
+        var script = expression.closeCode;
+
+        if (!script) {
+            return;
+        }
+
+        var errorName = roster.gen();
+        pushScript(script);
         pushScript('}catch(' + errorName + '){');
-        pushScript(errorName + '.snippet=' + JSON.stringify(snippet) + ';');
-        pushScript('throw ' + accidentName + '(' + errorName + ');');
+        pushScript('throw ' + accidentName + '(' + errorName + ', ' + wrap(object.filter(snippet, [
+            'file', 'line', 'start', 'end'
+        ])) + ');');
         pushScript('}');
     };
 
@@ -67,13 +78,26 @@ module.exports = function (template) {
                 break;
 
             case 'expression':
-                wrapTry(snippet);
+                var expression = snippet.expression;
+
+                // 自闭合表达式
+                if (expression.single) {
+                    wrapTry(expression);
+                    wrapCatch(expression, expression.begin);
+                }
+                // 前后闭合表达式
+                else {
+                    wrapCatch(expression, expression.begin);
+                    wrapTry(expression);
+                }
+
                 break;
         }
     });
     pushScript('}');
-    pushScript('return ' + outputName + ';');
+    pushScript('return ' + utilsName + '.trim(' + outputName + ');');
 
+    console.log(scripts.join('\n'));
     var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));
     fn.snippets = snippets;
     return fn;

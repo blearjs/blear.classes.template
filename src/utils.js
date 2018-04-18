@@ -12,5 +12,6 @@ var string = require('blear.utils.string');
 
 exports.escape = string.escapeHTML;
 exports.ify = string.ify;
+exports.trim = string.trim;
 
 
