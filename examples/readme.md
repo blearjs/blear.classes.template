@@ -1,6 +1,6 @@
 - 变量转义 {{v}} √
 - 变量不转义 {{=v}} √
 - if、else if、else √
-- for index, item in list
+- for index, item in list √
 - 块状原文 {{@v}} => {{v}}
 - 行内原文 {{@}}{{v}}{{/@}} => {{v}}
