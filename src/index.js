@@ -32,7 +32,7 @@ var Template = Events.extend({
         try {
             return the[_tpl].call(data, data, utils, filters, fun.bind(accident, the[_tpl].snippets));
         } catch (err) {
-            return '<pre>' + err.message + '</pre>';
+            return err.message;
         }
     }
 });
