@@ -23,6 +23,7 @@ module.exports = function (template) {
     var utilsName = roster.utils;
     var filterName = roster.filter;
     var accidentName = roster.accident;
+    var pushName = roster.push;
     var scripts = [
         // // 参数0: data
         // 'var ' + dataName + '=arguments[0]||{};',
@@ -32,8 +33,9 @@ module.exports = function (template) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        // 'debugger;',
-        'var ' + outputName + '="";',
+        'debugger;',
+        'var ' + outputName + '=[];',
+        'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'
     ];
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
@@ -45,8 +47,17 @@ module.exports = function (template) {
     var pushScript = function (script) {
         scripts.push(script);
     };
+    var dumpExpression = function (expression, key) {
+        var script = expression[key];
+
+        if (!script) {
+            return script;
+        }
+
+        return expression.echo ? pushName + '(' + script + ');' : script + ';'
+    };
     var wrapTry = function (expression) {
-        var script = expression.code;
+        var script = dumpExpression(expression, 'code');
 
         if (!script) {
             return;
@@ -56,9 +67,9 @@ module.exports = function (template) {
         pushScript(script);
     };
     var wrapCatch = function (expression, snippet) {
-        var script = expression.closeCode;
+        var script = dumpExpression(expression, 'closeCode');
 
-        if (!script) {
+        if (script === null) {
             return;
         }
 
@@ -74,7 +85,7 @@ module.exports = function (template) {
     array.each(snippets, function (index, snippet) {
         switch (snippet.type) {
             case 'string':
-                pushScript(outputName + '+=' + wrap(snippet.value) + ';');
+                pushScript(pushName + '(' + wrap(snippet.value) + ');');
                 break;
 
             case 'expression':
@@ -94,7 +105,7 @@ module.exports = function (template) {
         }
     });
     pushScript('}');
-    pushScript('return ' + utilsName + '.trim(' + outputName + ');');
+    pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
 
     console.log(scripts.join('\n'));
     var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));

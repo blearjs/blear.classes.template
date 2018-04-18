@@ -35,6 +35,11 @@ exports.accident = gen();
  */
 exports.output = gen();
 
+/**
+ * 输出push代码变量
+ */
+exports.push = gen();
+
 exports.gen = gen;
 
 // ================================

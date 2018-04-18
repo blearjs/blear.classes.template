@@ -41,7 +41,7 @@ module.exports = function (source, flag, expression) {
         case 'if':
             conditionList = [];
             code = 'if(' + condition + '){';
-            token.closeCode = '';
+            token.closeCode = null;
             beginSnippet = snippet;
             break;
 
@@ -63,18 +63,3 @@ module.exports = function (source, flag, expression) {
     conditionList.push(condition);
     return token;
 };
-
-
-// ===============================
-function buildToken(snippet, begin, code) {
-    return {
-        snippet: snippet,
-        // list: conditionList,
-        code: code,
-        type: 'if',
-        entity: false,
-        open: open,
-        closed: closed,
-        begin: beginSnippet
-    };
-}

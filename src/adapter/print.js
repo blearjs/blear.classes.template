@@ -123,9 +123,10 @@ module.exports = function (source, flag, expression) {
     });
 
     return {
-        code: roster.output + '+=' + code + ';',
+        code: code,
         type: 'print',
-        entity: true
+        entity: true,
+        echo: true
     };
 };
 
