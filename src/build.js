@@ -8,12 +8,10 @@
 
 'use strict';
 
-var access = require('blear.utils.access');
 var array = require('blear.utils.array');
 var object = require('blear.utils.object');
 
 module.exports = function (adapters, args) {
-    args = access.args(args);
     var built = {
         code: '',
         entity: true

@@ -24,28 +24,34 @@ module.exports = function (template, regular, adapter) {
     var line = 0;
     var start = 0;
     var end = 0;
-    var pushSinppet = function (isExpression, value) {
+    var pushSinppet = function (isExpression, value, expression) {
         snippets.push({
+            index: snippets.length,
             type: isExpression ? TYPE_EXPRESSION : TYPE_STRING,
-            // source: template,
+            file: null,
             value: value,
+            expression: expression,
             start: start,
             end: end,
             line: line
         });
     };
+    snippets.template = template;
+    snippets.lines = template.split(lineRE);
 
     for (var step = 0; step < matches.length; step++) {
         var value = matches[step];
         var expressionMatches = value.match(regular);
 
+        end += value.length;
+
         if (expressionMatches) {
             var args = array.from(expressionMatches);
-            adapter.apply(null, args);
+            pushSinppet(true, value, adapter.apply(null, args));
+        } else {
+            pushSinppet(false, value);
         }
 
-        end += value.length;
-        pushSinppet(expressionMatches, value);
         line += value.split(lineRE).length - 1;
         start += value.length;
     }

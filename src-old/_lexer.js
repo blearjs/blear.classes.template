@@ -159,7 +159,7 @@ lo.lex = function (str) {
     return tokens;
 }
 
-lo.error = function (msg) {
+lo.accident = function (msg) {
     throw  Error("Parse Error: " + msg + ':\n' + trackErrorPos(this.input, this.index));
 }
 

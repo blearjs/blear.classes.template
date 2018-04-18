@@ -12,3 +12,7 @@ var Template = require('../src/index');
 
 var tpl = new Template(require('./base-template.html'));
 
+document.getElementById('ret').innerHTML = tpl.render({
+    a: 'Hello'
+});
+

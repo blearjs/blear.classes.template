@@ -11,6 +11,7 @@
 var array = require('blear.utils.array');
 
 var expressionParser = require('../parser/expression');
+var roster = require('../roster');
 
 module.exports = function (source, flag, expression) {
     var tokens = expressionParser(expression);
@@ -97,13 +98,20 @@ module.exports = function (source, flag, expression) {
     });
     pushArg();
 
+    pipes.push({
+        name: roster.entity,
+        single: true,
+        args: []
+    });
+
     array.each(pipes, function (index, pipe) {
         pipe.args.unshift(code);
-        code = pipe.name + '(' + pipe.args.join(',') + ')';
+        code = (pipe.single ? '' : roster.filter + '.') + pipe.name + '(' + pipe.args.join(',') + ')';
     });
 
     return {
-        code: JSON.stringify(code),
+        code: roster.output + '+=' + code + ';',
+        type: 'print',
         entity: true
     };
 };

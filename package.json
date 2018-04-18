@@ -37,9 +37,10 @@
   },
   "dependencies": {
     "blear.classes.events": "^1.0.7",
-    "blear.utils.access": "^1.0.5",
     "blear.utils.array": "^1.0.12",
-    "blear.utils.object": "^1.0.14"
+    "blear.utils.function": "^1.0.5",
+    "blear.utils.object": "^1.0.14",
+    "blear.utils.string": "^1.0.9"
   },
   "peerDependencies": {},
   "devDependencies": {
