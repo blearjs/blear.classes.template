@@ -11,6 +11,9 @@
 var array = require('blear.utils.array');
 var object = require('blear.utils.object');
 
+var ignored = false;
+var ignoreStr = 'ignore';
+
 module.exports = function (adapters, args) {
     var snippet = this;
     var built = {
@@ -25,6 +28,26 @@ module.exports = function (adapters, args) {
         opened: true,
         closed: true
     };
+    var raw = args[0];
+    var flag = args[1];
+    var exp = args[2];
+
+    if (flag === '#' && exp === ignoreStr) {
+        ignored = true;
+        return;
+    }
+
+    if (flag === '/' && exp === 'ignore') {
+        ignored = false;
+    }
+
+    if (ignored) {
+        built.code = JSON.stringify(raw);
+        built.echo = true;
+        built.entity = false;
+        return built;
+    }
+
     var found = null;
 
     array.each(adapters, function (index, adapter) {

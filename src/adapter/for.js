@@ -15,7 +15,6 @@ var forRE = /^for\s+?([\s\S]*?)\s+?in\s+?([\s\S]*?)$/;
 var keyRE = /\s*,\s*/;
 var tree = new Tree();
 
-var lastFor = null;
 module.exports = function (source, flag, expression) {
     if (flag !== '#' && flag !== '/') {
         return;

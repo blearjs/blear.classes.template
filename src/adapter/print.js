@@ -99,6 +99,11 @@ module.exports = function (source, flag, expression) {
                         break;
                 }
                 break;
+
+            case 'whitespace':
+            case 'keyword':
+                code += value;
+                break;
         }
     });
     pushArg();

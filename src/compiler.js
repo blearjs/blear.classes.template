@@ -15,7 +15,7 @@ var build = require('./build');
 var syntaxParser = require('./parser/syntax');
 var roster = require('./roster');
 
-var regular = /{{([@#=/]?)\s*?([\w\W]*?)\s*?}}/;
+var regular = /{{([@#=/]?)\s*([\w\W]*?)\s*}}/;
 
 module.exports = function (template) {
     var outputName = roster.output;
@@ -40,6 +40,7 @@ module.exports = function (template) {
     ];
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
         return build.call(this, [
+            require('./adapter/raw'),
             require('./adapter/print'),
             require('./adapter/if'),
             require('./adapter/for')

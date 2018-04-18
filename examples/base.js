@@ -13,6 +13,10 @@ var Template = require('../src/index');
 var template = require('./base-template.html');
 var tpl = new Template(template);
 
+Template.filter('upperCase', function (code) {
+    return code.toUpperCase();
+});
+
 document.getElementById('template').value = template;
 
 document.getElementById('ret').innerHTML = tpl.render({
