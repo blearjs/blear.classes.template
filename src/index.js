@@ -29,6 +29,7 @@ var Template = Events.extend({
     render: function (data) {
         var the = this;
 
+        data = data || {};
         try {
             return the[_tpl].call(data, data, utils, filters, fun.bind(accident, the[_tpl].snippets));
         } catch (err) {

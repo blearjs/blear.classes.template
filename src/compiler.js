@@ -34,7 +34,6 @@ module.exports = function (template) {
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
         // 'debugger;',
-        dataName + '= ' + dataName + '||{};',
         'var ' + outputName + '=[];',
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'

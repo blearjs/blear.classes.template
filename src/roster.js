@@ -40,6 +40,11 @@ exports.output = gen();
  */
 exports.push = gen();
 
+/**
+ * 输出push代码变量
+ */
+exports.error = gen();
+
 exports.gen = gen;
 
 // ================================

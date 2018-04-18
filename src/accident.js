@@ -12,13 +12,12 @@ var string = require('blear.utils.string');
 
 var roster = require('./roster');
 
-var repeat = string.repeat;
 var more = '...';
-var indicator = '^';
 var lineNoSeparator = '| ';
 var errorLine = '>> ';
 var eachLineMaxLength = 40;
 var filterNameRE = new RegExp(string.escapeRegExp(roster.filter + '.'));
+var errorFlag = roster.error;
 
 /**
  * 意外处理
@@ -27,6 +26,11 @@ var filterNameRE = new RegExp(string.escapeRegExp(roster.filter + '.'));
  * @returns {*}
  */
 module.exports = function (err, snippet) {
+    // 已经是修正过的 error，因为嵌套 try catch 会层层捕获的
+    if (err[errorFlag]) {
+        return err;
+    }
+
     var snippets = this;
     var lines = snippets.lines;
     var msg = err.message;
@@ -63,6 +67,7 @@ module.exports = function (err, snippet) {
     msgList.push('');
     msgList.push(msg);
 
+    err[errorFlag] = true;
     err.message = msgList.join('\n');
     return err;
 };

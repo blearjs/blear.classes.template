@@ -43,6 +43,7 @@ module.exports = function (source, flag, expression) {
 
     // 循环闭合
     if (closed) {
+        token.begin = tree.current();
         tree.end();
         token.closeCode = '});';
     }

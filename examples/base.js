@@ -16,6 +16,16 @@ var tpl = new Template(template);
 document.getElementById('template').value = template;
 
 document.getElementById('ret').innerHTML = tpl.render({
-    list: ['a', 'b']
+    list: [{
+        name: '程序员',
+        children: ['<h1>A</h1>', 'B', 'C']
+    }, {
+        name: '教师',
+        children: ['甲', '乙', '丙']
+    }, {
+        name: '公务员',
+        children: ['aa', 'bb', 'cc']
+    }],
+    map: {a: 1, b: 2, c: 3}
 });
 
