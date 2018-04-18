@@ -25,7 +25,7 @@ module.exports = function (source, flag, expression) {
     var code = '';
 
     if (!closed) {
-        var matches = expression.match(/^(if|else\s+?if|else)\b(.*)$/);
+        var matches = expression.match(/^(if|else\s+?if|else)\b([\s\S]*)$/);
         var method = matches[1].replace(/\s+/, ' ');
         var condition = string.trim(matches[2]);
     }

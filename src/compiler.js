@@ -33,7 +33,7 @@ module.exports = function (template) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        'debugger;',
+        // 'debugger;',
         dataName + '= ' + dataName + '||{};',
         'var ' + outputName + '=[];',
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
