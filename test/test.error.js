@@ -7,6 +7,8 @@
 
 'use strict';
 
+var string = require('blear.utils.string');
+
 var Template = require('../src/index.js');
 
 
@@ -93,6 +95,50 @@ describe('error', function () {
 
         console.log(html);
         expect(html).toMatch(/^ >> 6\| /m);
+    });
+
+    it('内容过长', function () {
+        var tpl = new Template(
+            '1\n' +
+            '2\n' +
+            '3\n' +
+            '4\n' +
+            '5' + string.repeat('0', 40) + '\n' +
+            '6{{Date.now()}}' + string.repeat('0', 40) + '{{ a }}'
+        );
+        var html = tpl.render();
+
+        console.log(html);
+        expect(html).toMatch(/^ >> 6\| \.\.\./m);
+    });
+
+    it('嵌套', function () {
+        var tpl = new Template(
+            '{{#for a in b}}\n' +
+            /**/'{{#for c in a}}\n' +
+            /**/'{{c1}}\n' +
+            /**/'{{/for}}\n' +
+            '{{/for}}\n'
+        );
+        var html = tpl.render({
+            b: [[1]]
+        });
+
+        console.log(html);
+        expect(html).toMatch(/^ >> 3\| /m);
+    });
+
+    it('编译', function () {
+        var tpl = new Template(
+            '1\n' +
+            '2\n' +
+            '3\n' +
+            '4\n' +
+            '5{{#if true}}'
+        );
+        var html = tpl.render();
+
+        console.log(html);
     });
 
 });

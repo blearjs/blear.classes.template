@@ -24,6 +24,7 @@ module.exports = function (template, regular, adapter) {
     var line = 0;
     var start = 0;
     var end = 0;
+    var begin = 0;
     var pushSinppet = function (isExpression, value, expression) {
         var snippet = {
             index: snippets.length,
@@ -33,7 +34,8 @@ module.exports = function (template, regular, adapter) {
             expression: expression,
             start: start,
             end: end,
-            line: line
+            line: line,
+            begin: begin
         };
         snippets.push(snippet);
         return snippet;
@@ -41,6 +43,7 @@ module.exports = function (template, regular, adapter) {
 
     for (var step = 0; step < matches.length; step++) {
         var value = matches[step];
+        var length = value.length;
         var expressionMatches = value.match(regular);
         end += value.length;
         var snippet = pushSinppet(expressionMatches, value);
@@ -49,8 +52,15 @@ module.exports = function (template, regular, adapter) {
             snippet.expression = adapter.apply(snippet, array.from(expressionMatches));
         }
 
-        line += value.split(lineRE).length - 1;
-        start += value.length;
+        var lineLength = value.split(lineRE).length;
+        line += lineLength - 1;
+        start += length;
+
+        if (lineRE.test(value)) {
+            begin = 0;
+        } else {
+            begin += length;
+        }
     }
 
     return snippets;

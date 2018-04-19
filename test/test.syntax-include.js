@@ -13,19 +13,24 @@ var Template = require('../src/index.js');
 describe('include 语法', function () {
 
     it('include 变量', function () {
-        Template.loader = function (file, options) {
+        var loader = function (file, options) {
             return {
                 file: file,
                 template: file + '{{def}}'
             };
         };
-        var tpl = new Template('{{#include abc}}');
-        var html = tpl.render({
+        var tpl1 = new Template('{{#include abc}}');
+        var html1 = tpl1.render({abc: 'xxx'});
+        Template.loader = loader;
+        var tpl2 = new Template('{{#include abc}}');
+        var html2 = tpl2.render({
             abc: 'xxx',
             def: 'def'
         });
 
-        expect(html).toBe('xxxdef');
+        expect(Template.loader).toBe(loader);
+        expect(html1).toBe('未配置文件加载器');
+        expect(html2).toBe('xxxdef');
     });
 
     it('include 常量', function () {

@@ -15,9 +15,10 @@ var roster = require('./roster');
 var more = '...';
 var lineNoSeparator = '| ';
 var errorLine = '>> ';
-var eachLineMaxLength = 40;
+var eachLineMaxLength = 30;
 var filterNameRE = new RegExp(string.escapeRegExp(roster.filters + '.'));
 var errorFlag = roster.error;
+var lineRE = /[\n\r]/;
 
 /**
  * 意外处理
@@ -34,6 +35,7 @@ module.exports = function (err, snippetIndex) {
     var compiled = this;
     var snippet = compiled.snippets[snippetIndex];
     var lines = compiled.lines;
+    var template = compiled.template;
     var msg = err.message;
     var line = snippet.line;
     var min = Math.max(line - 2, 0);
@@ -46,12 +48,18 @@ module.exports = function (err, snippetIndex) {
 
     for (; min <= max; min++) {
         var content = lines[min];
+        var contentLength = content.length;
         var lineNo = min + 1 + '';
 
         // 当前行
         if (line === min) {
             lineNo = errorLine + lineNo;
-        } else if (content.length > eachLineMaxLength) {
+            var valueInThisLine = snippet.value.split(lineRE)[0];
+            var begin = snippet.begin;
+            var errContent = content.slice(begin, begin + valueInThisLine.length);
+            var prefix = content.slice(begin - eachLineMaxLength + errContent.length, begin);
+            content = (prefix ? more : '') + prefix + content.slice(begin, begin + valueInThisLine.length)
+        } else if (contentLength > eachLineMaxLength) {
             content = content.slice(0, eachLineMaxLength) + more;
         }
 

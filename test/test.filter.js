@@ -76,12 +76,28 @@ describe('filter', function () {
             console.log(a3);
             return (a1 + a2 + code).replace(a3, '-');
         });
-        var tpl = new Template('{{a | ' + filer1 + ': 1, "2", /\\d/g/*注释*/}}');
+        var tpl = new Template('{{a | ' + filer1 + ': 1, "2" + "3", /\\d/g/*注释*/}}');
         var html = tpl.render({
             a: 'aa',
             b: 'bb'
         });
 
-        expect(html).toBe('--aa');
+        expect(html).toBe('---aa');
+    });
+
+    it('连续冒号', function () {
+        var filer1 = 'f' + Date.now();
+        Template.filter(filer1, function (code, a1) {
+            return code + a1;
+        });
+        var tpl = new Template(
+            '{{a | ' + filer1 + '::b}}'
+        );
+        var html = tpl.render({
+            a: 'aa',
+            b: 'bb'
+        });
+
+        expect(html).toBe('aabb');
     });
 });

@@ -83,9 +83,6 @@ module.exports = function () {
                             return;
 
                         case ':':
-                            if (!lastFilterArg) {
-                                return;
-                            }
                             break;
 
                         case ',':
