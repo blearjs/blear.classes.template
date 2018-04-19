@@ -46,20 +46,22 @@ module.exports = function (file, template, options) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        'debugger;',
+        // 'debugger;',
         'var ' + outputName + '=[];',
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'
     ];
+    // 一次编译只使用一个适配器
+    var adapters = [
+        require('./adapters/include')(),
+        require('./adapters/raw')(),
+        require('./adapters/print')(),
+        require('./adapters/if')(),
+        require('./adapters/for')()
+    ];
     var compiled = syntaxParser(template, regular, function (source, flag, expression) {
         this.file = file;
-        return build.call(this, [
-            require('./adapters/include'),
-            require('./adapters/raw'),
-            require('./adapters/print'),
-            require('./adapters/if'),
-            require('./adapters/for')
-        ], [source, flag, expression]);
+        return build.call(this, adapters, [source, flag, expression]);
     });
     var snippets = compiled.snippets;
     var pushScript = function (script) {

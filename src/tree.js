@@ -75,9 +75,6 @@ var _currentChildren = sole();
 var _nextChildren = sole();
 var _put = sole();
 var prop = Tree.prototype;
-_children = '_children';
-_currentChildren = '_currentChildren';
-_nextChildren = '_nextChildren';
 
 prop[_put] = function (item) {
     var the = this;

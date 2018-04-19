@@ -12,36 +12,39 @@ var roster = require('../roster');
 
 var includeRE = /^include\s+([\s\S]+)$/;
 
-module.exports = function (source, flag, expression) {
-    if (flag !== '#') {
-        return;
-    }
+// 这里保证每一次编译都是一个新环境
+module.exports = function () {
+    return function (source, flag, expression) {
+        if (flag !== '#') {
+            return;
+        }
 
-    var matches = expression.match(includeRE);
-    var snippet = this;
+        var matches = expression.match(includeRE);
+        var snippet = this;
 
-    if (!matches) {
-        return;
-    }
+        if (!matches) {
+            return;
+        }
 
-    var file = snippet.file;
-    var code = roster.utils + '.include.call(' +
-        roster.the + ',' +
-        matches[1] + ', ' +
-        JSON.stringify({
-            parent: file
-        }) + ')(' + [
-            roster.data,
-            roster.utils,
-            roster.filter,
-            roster.accident
-        ].join(',') +
-        ')';
+        var file = snippet.file;
+        var code = roster.utils + '.include.call(' +
+            roster.the + ',' +
+            matches[1] + ', ' +
+            JSON.stringify({
+                parent: file
+            }) + ')(' + [
+                roster.data,
+                roster.utils,
+                roster.filter,
+                roster.accident
+            ].join(',') +
+            ')';
 
-    return {
-        type: 'inlcude',
-        entity: false,
-        echo: true,
-        code: code
+        return {
+            type: 'inlcude',
+            entity: false,
+            echo: true,
+            code: code
+        };
     };
 };

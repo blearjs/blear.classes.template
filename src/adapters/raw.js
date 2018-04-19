@@ -9,14 +9,17 @@
 'use strict';
 
 
-module.exports = function (source, flag, expression) {
-    if (flag !== '@') {
-        return;
-    }
+// 这里保证每一次编译都是一个新环境
+module.exports = function () {
+    return function (source, flag, expression) {
+        if (flag !== '@') {
+            return;
+        }
 
-    return {
-        type: 'raw',
-        code: JSON.stringify('{{' + expression + '}}'),
-        echo: true
+        return {
+            type: 'raw',
+            code: JSON.stringify('{{' + expression + '}}'),
+            echo: true
+        };
     };
 };
