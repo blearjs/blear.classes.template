@@ -16,16 +16,23 @@ var compiler = require('./compiler');
 var accident = require('./accident');
 var utils = require('./utils');
 
-var defaults = {};
+var defaults = {
+    file: null
+};
 var filters = {};
 var Template = Events.extend({
     constructor: function (template, options) {
         var the = this;
 
         the[_options] = object.assign({}, defaults, options);
-        the[_tpl] = compiler(template);
+        the[_tpl] = compiler(template, the[_options]);
     },
 
+    /**
+     * 渲染
+     * @param data
+     * @returns {*}
+     */
     render: function (data) {
         var the = this;
 
@@ -42,9 +49,29 @@ var _options = sole();
 var _tpl = sole();
 
 Template.defaults = defaults;
+
+/**
+ * 添加过滤器【全局】
+ * @param name
+ * @param filter
+ */
 Template.filter = function (name, filter) {
     filters[name] = filter;
 };
+
+/**
+ * 自定义加载器【全局】
+ * @param loader
+ */
+object.define(Template, 'loader', {
+    get: function () {
+        return utils.loader;
+    },
+    set: function (loader) {
+        utils.loader = loader;
+    }
+});
+
 module.exports = Template;
 
 

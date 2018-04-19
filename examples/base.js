@@ -11,11 +11,20 @@
 var Template = require('../src/index');
 
 var template = require('./base-template.html');
-var tpl = new Template(template);
+var tpl = new Template(template, {
+    file: '/base-template.html'
+});
 
 Template.filter('upperCase', function (code) {
     return code.toUpperCase();
 });
+
+Template.loader = function (file, options) {
+    return {
+        file: options.base + file,
+        template: '【' + file + ',' + options.base + '】'
+    };
+};
 
 document.getElementById('template').value = template;
 

@@ -14,10 +14,18 @@ var object = require('blear.utils.object');
 var build = require('./build');
 var syntaxParser = require('./parser/syntax');
 var roster = require('./roster');
+var utils = require('./utils');
 
 var regular = /{{([@#=/]?)\s*([\w\W]*?)\s*}}/;
 
-module.exports = function (template) {
+/**
+ * 编译
+ * @param template
+ * @param options
+ * @param options.file
+ * @returns {Function}
+ */
+module.exports = utils.compiler = function (template, options) {
     var outputName = roster.output;
     var dataName = roster.data;
     var utilsName = roster.utils;
@@ -39,11 +47,13 @@ module.exports = function (template) {
         'with(' + dataName + '){'
     ];
     var snippets = syntaxParser(template, regular, function (source, flag, expression) {
+        this.options = options;
         return build.call(this, [
-            require('./adapter/raw'),
-            require('./adapter/print'),
-            require('./adapter/if'),
-            require('./adapter/for')
+            require('./adapters/include'),
+            require('./adapters/raw'),
+            require('./adapters/print'),
+            require('./adapters/if'),
+            require('./adapters/for')
         ], [source, flag, expression]);
     });
     var pushScript = function (script) {
@@ -101,7 +111,7 @@ module.exports = function (template) {
     pushScript('}');
     pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
 
-    console.log(scripts.join('\n'));
+    // console.log(scripts.join('\n'));
     var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));
     fn.snippets = snippets;
     return fn;
