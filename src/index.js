@@ -9,7 +9,6 @@
 'use strict';
 
 var Events = require('blear.classes.events');
-var fun = require('blear.utils.function');
 var object = require('blear.utils.object');
 
 var compiler = require('./compiler');
@@ -17,7 +16,8 @@ var accident = require('./accident');
 var utils = require('./utils');
 
 var defaults = {
-    file: null
+    file: null,
+    cache: true
 };
 var filters = {};
 var Template = Events.extend({
@@ -25,7 +25,7 @@ var Template = Events.extend({
         var the = this;
 
         the[_options] = object.assign({}, defaults, options);
-        the[_tpl] = compiler(template, the[_options]);
+        the[_tpl] = compiler(the[_options].file, template, the[_options]);
     },
 
     /**
@@ -38,7 +38,7 @@ var Template = Events.extend({
 
         data = data || {};
         try {
-            return the[_tpl].call(data, data, utils, filters, fun.bind(accident, the[_tpl].snippets));
+            return the[_tpl](data, utils, filters, accident);
         } catch (err) {
             return err.message;
         }
@@ -71,6 +71,7 @@ object.define(Template, 'loader', {
         utils.loader = loader;
     }
 });
+utils.compiler = compiler;
 
 module.exports = Template;
 

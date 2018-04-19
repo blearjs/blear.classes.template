@@ -29,4 +29,6 @@ var tpl = new Template(template, {
     file: root
 });
 
-console.log(tpl.render());
+console.log(tpl.render({
+    name: '云'
+}));

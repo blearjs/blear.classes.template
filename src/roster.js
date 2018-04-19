@@ -11,6 +11,11 @@
 var gid = 0;
 
 /**
+ * 当前模板文件的代码变量
+ */
+exports.file = gen();
+
+/**
  * 输出数据代码变量
  */
 exports.data = gen();
@@ -29,6 +34,11 @@ exports.filter = gen();
  * 输出意外信息代码变量
  */
 exports.accident = gen();
+
+/**
+ * 输出 this 代码变量
+ */
+exports.the = gen();
 
 /**
  * 输出代码变量

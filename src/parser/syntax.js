@@ -38,8 +38,6 @@ module.exports = function (template, regular, adapter) {
         snippets.push(snippet);
         return snippet;
     };
-    snippets.template = template;
-    snippets.lines = template.split(lineRE);
 
     for (var step = 0; step < matches.length; step++) {
         var value = matches[step];
@@ -55,7 +53,10 @@ module.exports = function (template, regular, adapter) {
         start += value.length;
     }
 
-    return snippets;
+    return {
+        lines: template.split(lineRE),
+        snippets: snippets
+    };
 };
 
 

@@ -24,14 +24,15 @@ module.exports = function (source, flag, expression) {
         return;
     }
 
+    var file = snippet.file;
+
     return {
         type: 'inlcude',
         entity: false,
         echo: true,
-        code: roster.utils + '.include(' + matches[1] + ', ' + JSON.stringify({
-            parent: snippet.options.file
-        }) + ').call(' + [
-            roster.data,
+        code: roster.utils + '.include.call(' + roster.the + ',' + matches[1] + ', ' + JSON.stringify({
+            parent: file
+        }) + ')(' + [
             roster.data,
             roster.utils,
             roster.filter,

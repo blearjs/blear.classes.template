@@ -21,8 +21,8 @@ Template.filter('upperCase', function (code) {
 
 Template.loader = function (file, options) {
     return {
-        file: options.base + file,
-        template: '【' + file + ',' + options.base + '】'
+        file: options.parent + file,
+        template: '【{{x}}' + file + ',' + options.parent + '】'
     };
 };
 

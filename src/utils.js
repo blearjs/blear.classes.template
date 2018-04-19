@@ -11,8 +11,6 @@
 var string = require('blear.utils.string');
 var collection = require('blear.utils.collection');
 
-var compiler = require('./compiler');
-
 exports.escape = string.escapeHTML;
 exports.ify = string.ify;
 exports.trim = string.trim;
@@ -32,15 +30,13 @@ exports.each = collection.each;
 exports.include = function (file, options) {
     var loaded = exports.loader(file, options);
     var compiler = exports.compiler;
-    var fn = compiler(loaded.template, {
-        file: loaded.file
-    });
-
-    return fn;
+    return compiler(loaded.file, loaded.template, this.options);
 };
 /**
  * 加载器，可以被外部重写
  * @param file
+ * @param options
+ * @param options.parent
  * @returns {*}
  */
 exports.loader = function (file, options) {

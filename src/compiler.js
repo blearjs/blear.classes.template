@@ -9,30 +9,35 @@
 'use strict';
 
 var array = require('blear.utils.array');
+var fun = require('blear.utils.function');
 var object = require('blear.utils.object');
 
 var build = require('./build');
 var syntaxParser = require('./parser/syntax');
 var roster = require('./roster');
-var utils = require('./utils');
 
 var regular = /{{([@#=/]?)\s*([\w\W]*?)\s*}}/;
+var caches = {};
 
 /**
  * 编译
+ * @param file
  * @param template
- * @param options
- * @param options.file
+ * @param [options]
+ * @param [options.cache]
  * @returns {Function}
  */
-module.exports = utils.compiler = function (template, options) {
-    var outputName = roster.output;
+module.exports = function (file, template, options) {
+    var theName = roster.the;
     var dataName = roster.data;
     var utilsName = roster.utils;
     var filterName = roster.filter;
     var accidentName = roster.accident;
+    var outputName = roster.output;
     var pushName = roster.push;
     var scripts = [
+        // this
+        'var ' + theName + '=this;',
         // // 参数0: data
         // 'var ' + dataName + '=arguments[0]||{};',
         // // 参数1: entity
@@ -41,13 +46,13 @@ module.exports = utils.compiler = function (template, options) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        // 'debugger;',
+        'debugger;',
         'var ' + outputName + '=[];',
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'
     ];
-    var snippets = syntaxParser(template, regular, function (source, flag, expression) {
-        this.options = options;
+    var compiled = syntaxParser(template, regular, function (source, flag, expression) {
+        this.file = file;
         return build.call(this, [
             require('./adapters/include'),
             require('./adapters/raw'),
@@ -56,6 +61,7 @@ module.exports = utils.compiler = function (template, options) {
             require('./adapters/for')
         ], [source, flag, expression]);
     });
+    var snippets = compiled.snippets;
     var pushScript = function (script) {
         scripts.push(script);
     };
@@ -84,9 +90,7 @@ module.exports = utils.compiler = function (template, options) {
         var errorName = roster.gen();
         pushScript(dumpExpression(expression, 'closeCode'));
         pushScript('}catch(' + errorName + '){');
-        pushScript('throw ' + accidentName + '(' + errorName + ', ' + wrap(object.filter(snippet, [
-            'file', 'line', 'start', 'end'
-        ])) + ');');
+        pushScript('throw ' + accidentName + '.call(' + theName + ',' + errorName + ',' + snippet.index + ');');
         pushScript('}');
     };
 
@@ -111,10 +115,11 @@ module.exports = utils.compiler = function (template, options) {
     pushScript('}');
     pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
 
-    // console.log(scripts.join('\n'));
     var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));
-    fn.snippets = snippets;
-    return fn;
+    compiled.file = file;
+    compiled.template = template;
+    compiled.options = options;
+    return fun.bind(fn, compiled);
 };
 
 // =========================================

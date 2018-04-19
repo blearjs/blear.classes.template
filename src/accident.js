@@ -22,17 +22,18 @@ var errorFlag = roster.error;
 /**
  * 意外处理
  * @param err
- * @param snippet
+ * @param snippetIndex
  * @returns {*}
  */
-module.exports = function (err, snippet) {
+module.exports = function (err, snippetIndex) {
     // 已经是修正过的 error，因为嵌套 try catch 会层层捕获的
     if (err[errorFlag]) {
         return err;
     }
 
-    var snippets = this;
-    var lines = snippets.lines;
+    var compiled = this;
+    var snippet = compiled.snippets[snippetIndex];
+    var lines = compiled.lines;
     var msg = err.message;
     var line = snippet.line;
     var min = Math.max(line - 2, 0);
@@ -64,8 +65,15 @@ module.exports = function (err, snippet) {
         );
     }
 
-    msgList.push('');
-    msgList.push(msg);
+    msgList.push(
+        '',
+        msg
+    );
+
+    var file = snippet.file;
+    if (file) {
+        msgList.push('file: ' + file);
+    }
 
     err[errorFlag] = true;
     err.message = msgList.join('\n');
