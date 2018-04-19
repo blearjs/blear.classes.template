@@ -10,7 +10,7 @@
 
 var array = require('blear.utils.array');
 
-var expressionParser = require('../parser/expression');
+var expressionParser = require('../parsers/expression');
 var roster = require('../roster');
 
 module.exports = function (source, flag, expression) {

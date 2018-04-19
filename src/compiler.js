@@ -13,7 +13,7 @@ var fun = require('blear.utils.function');
 var object = require('blear.utils.object');
 
 var build = require('./build');
-var syntaxParser = require('./parser/syntax');
+var syntaxParser = require('./parsers/syntax');
 var roster = require('./roster');
 
 var regular = /{{([@#=/]?)\s*([\w\W]*?)\s*}}/;
