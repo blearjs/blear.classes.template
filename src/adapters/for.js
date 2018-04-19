@@ -35,25 +35,34 @@ module.exports = function (source, flag, expression) {
     }
 
     var snippet = this;
-    var opened = false;
     var token = {
         type: 'for'
     };
+    var openCode = '';
+    var closeCode = '';
 
     // 循环闭合
     if (closed) {
         token.begin = tree.current();
         tree.end();
-        token.closeCode = '});';
+        closeCode = '});';
     }
     // 循环开启
     else {
-        token.code = roster.utils + '.each(' + listName + ', function(' + keyName + ', ' + itemName + '){';
-        opened = true;
+        openCode = roster.utils + '.each(' + listName + ', function(' + keyName + ', ' + itemName + '){';
         tree.first(snippet);
     }
 
-    token.opened = opened;
-    token.closed = closed;
+    var scripts = [];
+
+    if (openCode) {
+        scripts.push({type: 'open', code: openCode});
+    }
+    // 不可能同时关闭和打开一个 for
+    else if (closeCode) {
+        scripts.push({type: 'close', code: closeCode});
+    }
+
+    token.scripts = scripts;
     return token;
 };

@@ -25,18 +25,23 @@ module.exports = function (source, flag, expression) {
     }
 
     var file = snippet.file;
-
-    return {
-        type: 'inlcude',
-        entity: false,
-        echo: true,
-        code: roster.utils + '.include.call(' + roster.the + ',' + matches[1] + ', ' + JSON.stringify({
+    var code = roster.utils + '.include.call(' +
+        roster.the + ',' +
+        matches[1] + ', ' +
+        JSON.stringify({
             parent: file
         }) + ')(' + [
             roster.data,
             roster.utils,
             roster.filter,
             roster.accident
-        ].join(',') + ')'
+        ].join(',') +
+        ')';
+
+    return {
+        type: 'inlcude',
+        entity: false,
+        echo: true,
+        code: code
     };
 };

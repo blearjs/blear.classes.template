@@ -10,6 +10,7 @@
 
 var array = require('blear.utils.array');
 var object = require('blear.utils.object');
+var typeis = require('blear.utils.typeis');
 
 var ignored = false;
 var ignoreStr = 'ignore';
@@ -17,16 +18,10 @@ var ignoreStr = 'ignore';
 module.exports = function (adapters, args) {
     var snippet = this;
     var built = {
-        // 自身代码
-        code: '',
-        // 关闭代码
-        closeCode: '',
         // 实体符
         entity: true,
         // 是否输出
-        echo: false,
-        opened: true,
-        closed: true
+        echo: false
     };
     var raw = args[0];
     var flag = args[1];
@@ -59,6 +54,13 @@ module.exports = function (adapters, args) {
             return false;
         }
     });
+
+    if (found && !typeis.Array(built.scripts)) {
+        built.scripts = [
+            {code: built.code, type: 'open'},
+            {code: '', type: 'close'}
+        ];
+    }
 
     return found ? built : null;
 };

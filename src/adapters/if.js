@@ -28,23 +28,22 @@ module.exports = function (source, flag, expression) {
 
     var snippet = this;
     var closed = flag === '/';
-    var code = '';
 
     if (!closed) {
-
         var method = matches[1].replace(/\s+/, ' ');
         var condition = string.trim(matches[2]);
     }
 
+    var openCode = '';
+    var closeCode = '}';
     var token = {
-        closeCode: '}',
         type: 'if'
     };
 
     switch (method) {
         case 'if':
-            code = 'if(' + condition + '){';
-            token.closeCode = null;
+            openCode = 'if(' + condition + '){';
+            closeCode = '';
             // 树的第一个节点
             tree.first({
                 snippet: snippet,
@@ -53,7 +52,7 @@ module.exports = function (source, flag, expression) {
             break;
 
         case 'else if':
-            code = 'if(' + condition + '&&' + dumpConditions(tree) + '){';
+            openCode = 'if(' + condition + '&&' + dumpConditions(tree) + '){';
             token.begin = tree.current().snippet;
             tree.next({
                 snippet: snippet,
@@ -62,8 +61,8 @@ module.exports = function (source, flag, expression) {
             break;
 
         case 'else':
+            openCode = 'if(' + dumpConditions(tree) + '){';
             token.begin = tree.current().snippet;
-            code = 'if(' + dumpConditions(tree) + '){';
             break;
 
         // 最后闭合
@@ -73,7 +72,19 @@ module.exports = function (source, flag, expression) {
             break;
     }
 
-    token.code = code;
+    var scripts = [];
+
+    // 先闭合上一个条件判断
+    if (closeCode) {
+        scripts.push({code: closeCode, type: 'close'});
+    }
+
+    // 再开始本次条件判断
+    if (openCode) {
+        scripts.push({code: openCode, type: 'open'});
+    }
+
+    token.scripts = scripts;
     return token;
 };
 

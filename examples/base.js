@@ -22,7 +22,7 @@ Template.filter('upperCase', function (code) {
 Template.loader = function (file, options) {
     return {
         file: options.parent + file,
-        template: '【{{x}}' + file + ',' + options.parent + '】'
+        template: '【'+ file + ',' + options.parent + '】'
     };
 };
 

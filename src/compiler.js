@@ -65,30 +65,16 @@ module.exports = function (file, template, options) {
     var pushScript = function (script) {
         scripts.push(script);
     };
-    var dumpExpression = function (expression, key) {
-        var script = expression[key];
-
-        if (!script) {
-            return script;
-        }
-
-        return expression.echo ? pushName + '(' + script + ');' : script + ';'
+    var dumpExpression = function (expression, code) {
+        return expression.echo ? pushName + '(' + code + ');' : code + ';'
     };
-    var wrapTry = function (expression) {
-        if (!expression.opened) {
-            return;
-        }
-
+    var wrapTry = function (expression, code) {
         pushScript('try{');
-        pushScript(dumpExpression(expression, 'code'));
+        pushScript(dumpExpression(expression, code));
     };
-    var wrapCatch = function (expression, snippet) {
-        if (!expression.closed) {
-            return;
-        }
-
+    var wrapCatch = function (expression, code, snippet) {
         var errorName = roster.gen();
-        pushScript(dumpExpression(expression, 'closeCode'));
+        pushScript(dumpExpression(expression, code));
         pushScript('}catch(' + errorName + '){');
         pushScript('throw ' + accidentName + '.call(' + theName + ',' + errorName + ',' + snippet.index + ');');
         pushScript('}');
@@ -107,8 +93,18 @@ module.exports = function (file, template, options) {
                     return;
                 }
 
-                wrapTry(expression);
-                wrapCatch(expression, expression.begin || snippet);
+                array.each(expression.scripts, function (index, script) {
+                    var code = script.code;
+                    switch (script.type) {
+                        case 'open':
+                            wrapTry(expression, code);
+                            break;
+
+                        case 'close':
+                            wrapCatch(expression, code, expression.begin || snippet);
+                            break;
+                    }
+                });
                 break;
         }
     });
