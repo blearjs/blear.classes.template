@@ -65,7 +65,7 @@ function matchToToken(match) {
 /**
  * 将逻辑表达式解释为 Tokens
  * @param {string} expression
- * @return {Object[]}
+ * @return {[]}
  */
 function tokenizer(expression) {
     var tokenMatches = expression.match(tokenRE);

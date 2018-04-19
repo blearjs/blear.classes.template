@@ -47,7 +47,7 @@ module.exports = function () {
             var value = token.value;
             switch (token.type) {
                 case 'invalid':
-                    throw new Error('表达式含有非法字符');
+                    throw new SyntaxError('插值表达式语法有误');
 
                 case 'string':
                 case 'number':

@@ -39,4 +39,11 @@ describe('print 语法', function () {
         expect(html).toBe('abca<a>');
     });
 
+    it('关键字', function () {
+        var tpl = new Template('{{typeof Date}}');
+        var html = tpl.render();
+
+        expect(html).toBe('function');
+    });
+
 });

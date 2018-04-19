@@ -9,6 +9,7 @@
 'use strict';
 
 var roster = require('../roster');
+var valid = require('../parsers/valid');
 
 var includeRE = /^include\s+([\s\S]+)$/;
 
@@ -26,10 +27,16 @@ module.exports = function () {
             return;
         }
 
+        var name = matches[1];
+
+        if (!valid(name)) {
+            throw new SyntaxError('路径语法表达式有误');
+        }
+
         var file = snippet.file;
         var code = roster.utils + '.include.call(' +
             roster.the + ',' +
-            matches[1] + ', ' +
+            name + ', ' +
             JSON.stringify({
                 parent: file
             }) + ')(' + [

@@ -10,6 +10,7 @@
 
 var roster = require('../roster');
 var Tree = require('../tree');
+var valid = require('../parsers/valid');
 
 var forRE = /^for\s+?([\s\S]*?)\s+?in\s+?([\s\S]*?)$/;
 var keyRE = /\s*,\s*/;
@@ -35,6 +36,10 @@ module.exports = function () {
             var listName = matches[2];
             var itemName = leftNames.pop();
             var keyName = leftNames.pop() || roster.gen();
+
+            if (!valid(keyName) || !valid(itemName) || !valid(listName)) {
+                throw new SyntaxError('循环语法表达式有误');
+            }
         }
 
         var snippet = this;
