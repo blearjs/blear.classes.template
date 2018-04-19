@@ -16,8 +16,10 @@ var build = require('./build');
 var syntaxParser = require('./parsers/syntax');
 var roster = require('./roster');
 
-var regular = /{{([@#=/]?)\s*([\w\W]*?)\s*}}/;
+var regular = /{{([#=/\\]?)\s*([\w\W]*?)\s*}}/;
 var caches = {};
+var STRING_TYPE = 'string';
+var lineRE = /[\n\r]/;
 
 /**
  * 编译
@@ -31,7 +33,7 @@ module.exports = function (file, template, options) {
     var theName = roster.the;
     var dataName = roster.data;
     var utilsName = roster.utils;
-    var filterName = roster.filter;
+    var filtersName = roster.filters;
     var accidentName = roster.accident;
     var outputName = roster.output;
     var pushName = roster.push;
@@ -46,7 +48,7 @@ module.exports = function (file, template, options) {
         // 'var ' + filterName + '=arguments[2];',
         // // 参数3: error
         // 'var ' + errorName + '=arguments[3];',
-        // 'debugger;',
+        'debugger;',
         'var ' + outputName + '=[];',
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'
@@ -55,68 +57,101 @@ module.exports = function (file, template, options) {
     var adapters = [
         require('./adapters/include')(),
         require('./adapters/raw')(),
-        require('./adapters/print')(),
         require('./adapters/if')(),
-        require('./adapters/for')()
+        require('./adapters/for')(),
+        require('./adapters/print')()
     ];
-    var compiled = syntaxParser(template, regular, function (source, flag, expression) {
-        this.file = file;
-        return build.call(this, adapters, [source, flag, expression]);
-    });
-    var snippets = compiled.snippets;
-    var pushScript = function (script) {
-        scripts.push(script);
+    var errSnippet = null;
+    var compiled = {
+        file: file,
+        template: template,
+        options: options,
+        lines: template.split(lineRE)
     };
-    var dumpExpression = function (expression, code) {
-        return expression.echo ? pushName + '(' + code + ');' : code + ';'
-    };
-    var wrapTry = function (expression, code) {
-        pushScript('try{');
-        pushScript(dumpExpression(expression, code));
-    };
-    var wrapCatch = function (expression, code, snippet) {
-        var errorName = roster.gen();
-        pushScript(dumpExpression(expression, code));
-        pushScript('}catch(' + errorName + '){');
-        pushScript('throw ' + accidentName + '.call(' + theName + ',' + errorName + ',' + snippet.index + ');');
-        pushScript('}');
-    };
+    var fn;
+    try {
+        var snippets = syntaxParser(template, regular, function (source, flag, expression) {
+            var snippet = this;
+            snippet.file = file;
 
-    array.each(snippets, function (index, snippet) {
-        switch (snippet.type) {
-            case 'string':
-                pushScript(pushName + '(' + wrap(snippet.value) + ');');
-                break;
+            try {
+                return build.call(snippet, adapters, [source, flag, expression]);
+            } catch (err) {
+                errSnippet = snippet;
+                throw err;
+            }
+        });
 
-            case 'expression':
-                var expression = snippet.expression;
+        var pushScript = function (script) {
+            scripts.push(script);
+        };
+        var dumpExpression = function (expression, code) {
+            return expression.echo ? pushName + '(' + code + ');' : code + ';'
+        };
+        var wrapTry = function (expression, code) {
+            pushScript('try{');
+            pushScript(dumpExpression(expression, code));
+        };
+        var wrapCatch = function (expression, code, snippet) {
+            var errorName = roster.gen();
+            pushScript(dumpExpression(expression, code));
+            pushScript('}catch(' + errorName + '){');
+            pushScript('throw ' + accidentName + '.call(' + theName + ',' + errorName + ',' + snippet.index + ');');
+            pushScript('}');
+        };
 
-                if (!expression) {
-                    return;
-                }
+        array.each(snippets, function (index, snippet) {
+            switch (snippet.type) {
+                case STRING_TYPE:
+                    pushScript(pushName + '(' + wrap(snippet.value) + ');');
+                    break;
 
-                array.each(expression.scripts, function (index, script) {
-                    var code = script.code;
-                    switch (script.type) {
-                        case 'open':
-                            wrapTry(expression, code);
-                            break;
+                case 'expression':
+                    var expression = snippet.expression;
 
-                        case 'close':
-                            wrapCatch(expression, code, expression.begin || snippet);
-                            break;
+                    if (!expression) {
+                        return;
                     }
-                });
-                break;
-        }
-    });
-    pushScript('}');
-    pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
 
-    var fn = new Function(dataName, utilsName, filterName, accidentName, scripts.join('\n'));
-    compiled.file = file;
-    compiled.template = template;
-    compiled.options = options;
+                    if (expression.type === STRING_TYPE) {
+                        return pushScript(pushName + '(' + wrap(expression.value) + ');');
+                    }
+
+                    array.each(expression.scripts, function (index, script) {
+                        var code = script.code;
+                        switch (script.type) {
+                            case 'open':
+                                wrapTry(expression, code);
+                                break;
+
+                            case 'close':
+                                wrapCatch(expression, code, expression.begin || snippet);
+                                break;
+                        }
+                    });
+                    break;
+            }
+        });
+        pushScript('}');
+        pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
+
+        console.log(scripts.join('\n'));
+
+        try {
+            fn = new Function(dataName, utilsName, filtersName, accidentName, scripts.join('\n'));
+        } catch (err) {
+            fn = function (data, utils, filers, accident) {
+                throw accident.call(this, err, 0);
+            };
+        }
+    } catch (err) {
+        snippets = [errSnippet];
+        fn = function (data, utils, filers, accident) {
+            throw accident.call(this, err, 0);
+        };
+    }
+
+    compiled.snippets = snippets;
     return fun.bind(fn, compiled);
 };
 

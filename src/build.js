@@ -13,7 +13,7 @@ var object = require('blear.utils.object');
 var typeis = require('blear.utils.typeis');
 
 var ignored = false;
-var ignoreStr = 'ignore';
+var IGNORE = 'ignore';
 
 module.exports = function (adapters, args) {
     var snippet = this;
@@ -27,19 +27,19 @@ module.exports = function (adapters, args) {
     var flag = args[1];
     var exp = args[2];
 
-    if (flag === '#' && exp === ignoreStr) {
+    if (flag === '#' && exp === IGNORE) {
         ignored = true;
         return;
     }
 
-    if (flag === '/' && exp === 'ignore') {
+    if (flag === '/' && exp === IGNORE) {
         ignored = false;
+        return;
     }
 
     if (ignored) {
-        built.code = JSON.stringify(raw);
-        built.echo = true;
-        built.entity = false;
+        built.type = 'string';
+        built.value = raw;
         return built;
     }
 
@@ -62,7 +62,10 @@ module.exports = function (adapters, args) {
         ];
     }
 
-    return found ? built : null;
+    return found ? built : {
+        type: 'string',
+        value: raw
+    };
 };
 
 

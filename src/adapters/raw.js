@@ -1,5 +1,5 @@
 /**
- * {{@raw}}
+ * {{\raw}}
  * @author ydr.me
  * @create 2018-04-18 09:59
  * @update 2018-04-18 09:59
@@ -12,14 +12,13 @@
 // 这里保证每一次编译都是一个新环境
 module.exports = function () {
     return function (source, flag, expression) {
-        if (flag !== '@') {
+        if (flag !== '\\') {
             return;
         }
 
         return {
-            type: 'raw',
-            code: JSON.stringify('{{' + expression + '}}'),
-            echo: true
+            type: 'string',
+            value: '{{' + expression + '}}'
         };
     };
 };

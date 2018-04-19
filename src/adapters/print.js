@@ -20,6 +20,7 @@ module.exports = function () {
             return;
         }
 
+        var snippet = this;
         var unescape = flag === '=';
         var tokens = expressionParser(expression);
         var piping = false;
@@ -28,10 +29,6 @@ module.exports = function () {
         var lastFilterName = '';
         var lastFilterArg = '';
         var pushName = function () {
-            if (!lastFilterName) {
-                return;
-            }
-
             pipes.push({
                 name: lastFilterName,
                 args: []
@@ -54,6 +51,9 @@ module.exports = function () {
 
                 case 'string':
                 case 'number':
+                case 'keyword':
+                case 'regex':
+                case 'whitespace':
                     if (piping) {
                         lastFilterArg += value;
                     } else {
@@ -101,11 +101,6 @@ module.exports = function () {
                             break;
                     }
                     break;
-
-                case 'whitespace':
-                case 'keyword':
-                    code += value;
-                    break;
             }
         });
         pushArg();
@@ -126,7 +121,7 @@ module.exports = function () {
 
         array.each(pipes, function (index, pipe) {
             pipe.args.unshift(code);
-            code = (pipe.native ? roster.utils : roster.filter) + '.' + pipe.name + '(' + pipe.args.join(',') + ')';
+            code = (pipe.native ? roster.utils : roster.filters) + '.' + pipe.name + '(' + pipe.args.join(',') + ')';
         });
 
         return {

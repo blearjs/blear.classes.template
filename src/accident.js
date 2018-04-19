@@ -16,7 +16,7 @@ var more = '...';
 var lineNoSeparator = '| ';
 var errorLine = '>> ';
 var eachLineMaxLength = 40;
-var filterNameRE = new RegExp(string.escapeRegExp(roster.filter + '.'));
+var filterNameRE = new RegExp(string.escapeRegExp(roster.filters + '.'));
 var errorFlag = roster.error;
 
 /**

@@ -28,7 +28,7 @@ exports.utils = gen();
 /**
  * 过滤器代码名称
  */
-exports.filter = gen();
+exports.filters = gen();
 
 /**
  * 输出意外信息代码变量

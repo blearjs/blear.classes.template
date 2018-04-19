@@ -53,10 +53,7 @@ module.exports = function (template, regular, adapter) {
         start += value.length;
     }
 
-    return {
-        lines: template.split(lineRE),
-        snippets: snippets
-    };
+    return snippets;
 };
 
 

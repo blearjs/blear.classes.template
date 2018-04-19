@@ -35,7 +35,7 @@ module.exports = function () {
             }) + ')(' + [
                 roster.data,
                 roster.utils,
-                roster.filter,
+                roster.filters,
                 roster.accident
             ].join(',') +
             ')';
