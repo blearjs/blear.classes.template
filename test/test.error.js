@@ -139,6 +139,25 @@ describe('error', function () {
         var html = tpl.render();
 
         console.log(html);
+        expect(html).toMatch(/^SyntaxError/m);
+    });
+
+    it('file', function () {
+        var tpl = new Template(
+            '1\n' +
+            '2\n' +
+            '3\n' +
+            '4\n' +
+            '5{{#if a}}{{/if}}'
+        ,{
+                file: 'file'
+            });
+        var html = tpl.render();
+
+        console.log(html);
+        expect(html).toMatch(/^ >> 5\|/m);
+        expect(html).toMatch(/^ReferenceError/m);
+        expect(html).toMatch(/^file: file/m);
     });
 
 });

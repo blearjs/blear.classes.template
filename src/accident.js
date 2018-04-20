@@ -35,7 +35,6 @@ module.exports = function (err, snippetIndex) {
     var compiled = this;
     var snippet = compiled.snippets[snippetIndex];
     var lines = compiled.lines;
-    var template = compiled.template;
     var msg = err.message;
     var line = snippet.line;
     var min = Math.max(line - 2, 0);

@@ -46,4 +46,18 @@ describe('print 语法', function () {
         expect(html).toBe('function');
     });
 
+    it('行内注释', function () {
+        var tpl = new Template('{{1//1}}');
+        var html = tpl.render();
+
+        expect(html).toBe('1');
+    });
+
+    it('块级注释', function () {
+        var tpl = new Template('{{1/*1*/}}');
+        var html = tpl.render();
+
+        expect(html).toBe('1');
+    });
+
 });

@@ -19,16 +19,14 @@ var validType = {
     keyword: 4
 };
 
+/**
+ * 表达式语法检查
+ * @param expression
+ * @returns {boolean}
+ */
 module.exports = function (expression) {
-    var tokens = array.filter(expressionParser(expression), function (index, token) {
-        return token.type !== 'comment';
-    });
+    var tokens = expressionParser(expression);
     var length = tokens.length;
-
-    // 表达式空长度
-    if (!length) {
-        return false;
-    }
 
     // 表达式只有一个非name、字符串、数字
     var token0 = tokens[0];
