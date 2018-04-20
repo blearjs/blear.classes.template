@@ -33,7 +33,13 @@ var defaults = {
      * 是否缓存
      * @type Boolean
      */
-    cache: true
+    cache: true,
+
+    /**
+     * 是否抛出错误
+     * @type Boolean
+     */
+    error: false
 };
 var filters = {};
 var Template = Class.extend({
@@ -42,7 +48,7 @@ var Template = Class.extend({
 
         Template.parent(the);
         the[_options] = object.assign({}, defaults, options);
-        the[_options][roster.caches] = the[_options].cache ? {} : null;
+        the[_options][roster.caches] = the[_options].cache ? Object.create(null) : null;
         the[_tpl] = compiler(the[_options].file, template, the[_options]);
     },
 
@@ -53,11 +59,16 @@ var Template = Class.extend({
      */
     render: function (data) {
         var the = this;
+        var options = the[_options];
 
         data = data || {};
         try {
             return the[_tpl](data, utils, filters, accident);
         } catch (err) {
+            if (options.error) {
+                throw err;
+            }
+
             return err.message;
         }
     }

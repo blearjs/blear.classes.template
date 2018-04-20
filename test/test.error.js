@@ -160,4 +160,20 @@ describe('error', function () {
         expect(html).toMatch(/^file: file/m);
     });
 
+    it('throw', function () {
+        var tpl  = new Template('{{a}}', {
+            error: true
+        });
+        var err = null;
+
+        try {
+            tpl.render();
+        } catch (_err) {
+            err = _err;
+        }
+
+        expect(err.name).toBe('ReferenceError');
+        expect(err.message).toMatch(/^ >> 1 |/m);
+    });
+
 });
