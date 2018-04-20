@@ -8,7 +8,7 @@
 
 'use strict';
 
-var Events = require('blear.classes.events');
+var Class = require('blear.classes.class');
 var object = require('blear.utils.object');
 
 var compiler = require('./compiler');
@@ -36,10 +36,11 @@ var defaults = {
     cache: true
 };
 var filters = {};
-var Template = Events.extend({
+var Template = Class.extend({
     constructor: function (template, options) {
         var the = this;
 
+        Template.parent(the);
         the[_options] = object.assign({}, defaults, options);
         the[_options][roster.caches] = the[_options].cache ? {} : null;
         the[_tpl] = compiler(the[_options].file, template, the[_options]);
