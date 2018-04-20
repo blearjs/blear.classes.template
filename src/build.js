@@ -15,7 +15,7 @@ var typeis = require('blear.utils.typeis');
 var ignored = false;
 var IGNORE = 'ignore';
 
-module.exports = function (adapters, args) {
+module.exports = function (statements, args) {
     var snippet = this;
     var built = {
         // 实体符
@@ -45,8 +45,8 @@ module.exports = function (adapters, args) {
 
     var found = null;
 
-    array.each(adapters, function (index, adapter) {
-        var ret = adapter.apply(snippet, args);
+    array.each(statements, function (index, statement) {
+        var ret = statement.apply(snippet, args);
 
         if (ret) {
             found = ret;

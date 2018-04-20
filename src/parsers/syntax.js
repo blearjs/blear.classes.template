@@ -15,7 +15,7 @@ var TYPE_STRING = 'string';
 var TYPE_EXPRESSION = 'expression';
 var lineRE = /[\n\r]/;
 
-module.exports = function (template, regular, adapter) {
+module.exports = function (template, regular, statement) {
     var snippets = [];
     var flags = regular.ignoreCase ? 'ig' : 'g';
     var pattern = regular.source + '|^$|[\\w\\W]';
@@ -49,7 +49,7 @@ module.exports = function (template, regular, adapter) {
         var snippet = pushSinppet(expressionMatches, value);
 
         if (expressionMatches) {
-            snippet.expression = adapter.apply(snippet, array.from(expressionMatches));
+            snippet.expression = statement.apply(snippet, array.from(expressionMatches));
         }
 
         var lineLength = value.split(lineRE).length;

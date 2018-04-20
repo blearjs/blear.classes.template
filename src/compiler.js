@@ -64,13 +64,13 @@ module.exports = function (file, template, options) {
         'var ' + pushName + '=' + utilsName + '.push(' + outputName + ');',
         'with(' + dataName + '){'
     ];
-    // 一次编译只使用一个适配器
-    var adapters = [
-        require('./adapters/include')(),
-        require('./adapters/raw')(),
-        require('./adapters/if')(),
-        require('./adapters/for')(),
-        require('./adapters/print')()
+    // 一次编译只使用一个声明实例
+    var statements = [
+        require('./statements/include')(),
+        require('./statements/raw')(),
+        require('./statements/if')(),
+        require('./statements/for')(),
+        require('./statements/print')()
     ];
     var errSnippet = null;
     var compiled = {
@@ -86,7 +86,7 @@ module.exports = function (file, template, options) {
             snippet.file = file;
 
             try {
-                return build.call(snippet, adapters, [source, flag, expression]);
+                return build.call(snippet, statements, [source, flag, expression]);
             } catch (err) {
                 errSnippet = snippet;
                 throw err;
