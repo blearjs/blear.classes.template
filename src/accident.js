@@ -56,8 +56,10 @@ module.exports = function (err, snippetIndex) {
             var valueInThisLine = snippet.value.split(lineRE)[0];
             var begin = snippet.begin;
             var errContent = content.slice(begin, begin + valueInThisLine.length);
-            var prefix = content.slice(begin - eachLineMaxLength + errContent.length, begin);
-            content = (prefix ? more : '') + prefix + content.slice(begin, begin + valueInThisLine.length)
+            var remainLength = eachLineMaxLength - errContent.length;
+            var prefixStart = begin - remainLength;
+            var prefix = content.slice(Math.max(prefixStart, 0), begin);
+            content = (prefixStart < 0 ? '' : more) + prefix + content.slice(begin, begin + valueInThisLine.length)
         } else if (contentLength > eachLineMaxLength) {
             content = content.slice(0, eachLineMaxLength) + more;
         }

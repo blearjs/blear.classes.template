@@ -55,6 +55,11 @@ exports.push = gen();
  */
 exports.error = gen();
 
+/**
+ * caches 代码变量
+ */
+exports.caches = gen();
+
 exports.gen = gen;
 
 

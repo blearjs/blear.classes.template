@@ -42,6 +42,7 @@
     "blear.utils.collection": "^1.0.4",
     "blear.utils.function": "^1.0.5",
     "blear.utils.object": "^1.0.14",
+    "blear.utils.path": "^1.0.10",
     "blear.utils.string": "^1.0.9",
     "blear.utils.typeis": "^1.0.3"
   },

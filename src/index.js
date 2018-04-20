@@ -14,9 +14,25 @@ var object = require('blear.utils.object');
 var compiler = require('./compiler');
 var accident = require('./accident');
 var utils = require('./utils');
+var roster = require('./roster');
 
 var defaults = {
-    file: null,
+    /**
+     * 根目录
+     * @type String
+     */
+    dirname: '',
+
+    /**
+     * 当前文件
+     * @type String
+     */
+    file: '',
+
+    /**
+     * 是否缓存
+     * @type Boolean
+     */
     cache: true
 };
 var filters = {};
@@ -25,6 +41,7 @@ var Template = Events.extend({
         var the = this;
 
         the[_options] = object.assign({}, defaults, options);
+        the[_options][roster.caches] = the[_options].cache ? {} : null;
         the[_tpl] = compiler(the[_options].file, template, the[_options]);
     },
 
@@ -58,6 +75,19 @@ Template.defaults = defaults;
 Template.filter = function (name, filter) {
     filters[name] = filter;
 };
+
+/**
+ * 自定义路径解决器【全局】
+ * @param loader
+ */
+object.define(Template, 'resolver', {
+    get: function () {
+        return utils.resolver;
+    },
+    set: function (resolver) {
+        utils.resolver = resolver;
+    }
+});
 
 /**
  * 自定义加载器【全局】

@@ -16,16 +16,12 @@ var Template = require('../src/index');
 var root = path.join(__dirname, '1.html');
 var template = fs.readFileSync(root, 'utf8');
 
-Template.loader = function (file, options) {
-    var file2 = path.join(path.dirname(options.parent), file);
-
-    return {
-        file: file2,
-        template: fs.readFileSync(file2, 'utf8')
-    };
+Template.loader = function (file) {
+    return fs.readFileSync(file, 'utf8');
 };
 
 var tpl = new Template(template, {
+    dirname: __dirname,
     file: root
 });
 

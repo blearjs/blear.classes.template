@@ -10,6 +10,7 @@
 
 var string = require('blear.utils.string');
 var collection = require('blear.utils.collection');
+var path = require('blear.utils.path');
 
 exports.escape = string.escapeHTML;
 exports.ify = string.ify;
@@ -28,22 +29,35 @@ exports.push = function (output) {
 };
 exports.each = collection.each;
 exports.include = function (file, options) {
-    var loaded = exports.loader(file, options);
-    var compiler = exports.compiler;
-    return compiler(loaded.file, loaded.template, this.options);
+    var compileOptions = this.options;
+    options.dirname = compileOptions.dirname;
+    var dest = exports.resolver(file, options);
+    return exports.compiler(dest, null, compileOptions);
 };
 /**
- * 加载器，可以被外部重写
- * @param file
+ * 处理器，可以被外部重写
+ * @param name
  * @param options
+ * @param options.dirname
  * @param options.parent
  * @returns {*}
  */
-exports.loader = function (file, options) {
-    return {
-        file: null,
-        template: '未配置文件加载器'
-    };
+exports.resolver = function (name, options) {
+    if (path.isAbsolute(name)) {
+        return path.join(options.dirname, name);
+    }
+
+    return path.resolve(path.dirname(options.parent), name);
+};
+
+/**
+ * 加载器，可以被外部重写
+ * 根据运行环境进行特殊处理
+ * @param file
+ * @returns {String}
+ */
+exports.loader = function (file) {
+    return '未配置文件加载器';
 };
 
 exports.compiler = null;

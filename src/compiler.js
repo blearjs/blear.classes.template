@@ -10,14 +10,13 @@
 
 var array = require('blear.utils.array');
 var fun = require('blear.utils.function');
-var object = require('blear.utils.object');
 
 var build = require('./build');
 var syntaxParser = require('./parsers/syntax');
 var roster = require('./roster');
+var utils = require('./utils');
 
 var regular = /{{([#=/\\]?)\s*([\w\W]*?)\s*}}/;
-var caches = {};
 var STRING_TYPE = 'string';
 var lineRE = /[\n\r]/;
 
@@ -26,10 +25,22 @@ var lineRE = /[\n\r]/;
  * @param file
  * @param template
  * @param [options]
+ * @param [options.file]
  * @param [options.cache]
  * @returns {Function}
  */
 module.exports = function (file, template, options) {
+    var caches = options[roster.caches];
+    var id = file || template;
+
+    if (caches && id && caches[id]) {
+        return caches[id];
+    }
+
+    if (template === null) {
+        template = utils.loader(file);
+    }
+
     var theName = roster.the;
     var dataName = roster.data;
     var utilsName = roster.utils;
@@ -152,7 +163,13 @@ module.exports = function (file, template, options) {
     }
 
     compiled.snippets = snippets;
-    return fun.bind(fn, compiled);
+    fn = fun.bind(fn, compiled);
+
+    if (caches) {
+        caches[id] = fn;
+    }
+
+    return fn;
 };
 
 // =========================================
