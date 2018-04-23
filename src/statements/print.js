@@ -28,10 +28,12 @@ module.exports = function () {
         var code = '';
         var lastFilterName = '';
         var lastFilterArg = '';
+        var startFilter = false;
+        var lastFilterArgs = null;
         var pushName = function () {
             pipes.push({
                 name: lastFilterName,
-                args: []
+                args: lastFilterArgs = []
             });
         };
         var pushArg = function () {
@@ -39,7 +41,7 @@ module.exports = function () {
                 return;
             }
 
-            pipes[pipes.length - 1].args.push(lastFilterArg);
+            lastFilterArgs.push(lastFilterArg);
             lastFilterArg = '';
         };
 
@@ -80,9 +82,19 @@ module.exports = function () {
                             pushArg();
                             lastFilterName = '';
                             piping = true;
+                            startFilter = false;
                             return;
 
                         case ':':
+                            if (piping) {
+                                if (startFilter) {
+                                    lastFilterArg += value;
+                                } else {
+                                    startFilter = true;
+                                }
+                            } else {
+                                code += value;
+                            }
                             break;
 
                         case ',':

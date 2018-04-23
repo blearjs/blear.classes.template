@@ -85,19 +85,30 @@ describe('filter', function () {
         expect(html).toBe('---aa');
     });
 
-    it('连续冒号', function () {
+    it('三目表达式', function () {
         var filer1 = 'f' + Date.now();
-        Template.filter(filer1, function (code, a1) {
-            return code + a1;
+        var tpl = new Template('{{ a ' +
+            ' | ' + filer1 + ': c ? d : e, f ? g : h' +
+            ' | ' + filer1 + ': c ? d : e, f ? g : h' +
+            '}}');
+        Template.filter(filer1, function (code, anther1, anther2) {
+            return code + anther1 + anther2;
         });
-        var tpl = new Template(
-            '{{a | ' + filer1 + '::b}}'
-        );
+        // 1 | f: 3 ? 4 : 5, 6 ? 7 : 8
+        // 1 + 4 + 7
+        // 11 | f: 3 ? 4 : 5, 6 ? 7 : 8
+        // 12 + 4 + 7
         var html = tpl.render({
-            a: 'aa',
-            b: 'bb'
+            a: 1,
+            c: 3,
+            d: 4,
+            e: 5,
+            f: 6,
+            g: 7,
+            h: 8
         });
 
-        expect(html).toBe('aabb');
+        expect(html).toBe('23');
     });
+
 });
