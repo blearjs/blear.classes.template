@@ -60,4 +60,15 @@ describe('print 语法', function () {
         expect(html).toBe('1');
     });
 
+    it('三目', function () {
+        var tpl = new Template('{{ a ? b : c }}');
+        var html = tpl.render({
+            a: 1,
+            b: 2,
+            c: 3
+        });
+
+        expect(html).toBe('2');
+    });
+
 });
