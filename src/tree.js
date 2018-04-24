@@ -57,7 +57,11 @@ var Tree = Class.extend({
      */
     end: function () {
         var the = this;
-        the[_nextChildren] = the[_currentChildren] = the[_currentChildren].parent;
+        the[_nextChildren] = the[_currentChildren] =
+            // 当前层级结束跳到上一个层级
+            the[_currentChildren].parent ||
+            // 或者当前层级已经是第一级，则还是当前层级
+            the[_currentChildren];
     },
 
     /**

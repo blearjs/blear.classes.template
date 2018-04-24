@@ -26,11 +26,10 @@ Template.loader = function (file, options) {
     };
 };
 
-document.getElementById('template').value = template;
-
-document.getElementById('ret').innerHTML = tpl.render({
+document.getElementById('ret').innerText = tpl.render({
     a: 1,
     b: 2,
-    c: 3
+    c: 3,
+    d: 4
 });
 

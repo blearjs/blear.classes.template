@@ -37,6 +37,8 @@ module.exports = function () {
             });
         };
         var pushArg = function () {
+            lastFilterArg = lastFilterArg.trim();
+
             if (!lastFilterArg) {
                 return;
             }

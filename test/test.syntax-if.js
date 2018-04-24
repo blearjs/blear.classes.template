@@ -76,4 +76,17 @@ describe('if 语法', function () {
         expect(html).toBe('23');
     });
 
+    it('if + if 连续', function () {
+        var tpl = new Template(
+            '{{#if 1}}' +
+            /**/'1' +
+            '{{/if}}' +
+            '{{#if 2}}' +
+            /**/'2' +
+            '{{/if}}'
+        );
+        var html = tpl.render();
+        expect(html).toBe('12');
+    });
+
 });

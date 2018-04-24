@@ -42,6 +42,20 @@ describe('filter', function () {
         expect(html).toBe(filer2 + filer1 + 'aa');
     });
 
+    it('无参', function () {
+        var filer1 = 'f' + Date.now();
+        Template.filter(filer1, function (code) {
+            return filer1 + code;
+        });
+        var tpl = new Template('{{a | ' + filer1 + '}}');
+        var html = tpl.render({
+            a: 'aa',
+            b: 'bb'
+        });
+
+        expect(html).toBe(filer1 + 'aa');
+    });
+
     it('单参', function () {
         var filer1 = 'f' + Date.now();
         Template.filter(filer1, function (code, a1) {
