@@ -9,6 +9,7 @@
 'use strict';
 
 var string = require('blear.utils.string');
+var path = require('blear.utils.path');
 
 var roster = require('./roster');
 
@@ -80,8 +81,11 @@ module.exports = function (err, snippetIndex) {
     );
 
     var file = snippet.file;
+    var dirname = snippet.dirname;
+
     if (file) {
-        msgList.push('file: ' + file);
+        var filename = dirname ? path.relative(dirname, file) : file;
+        msgList.push('file: ' + filename);
     }
 
     err[errorFlag] = true;

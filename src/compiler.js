@@ -25,6 +25,7 @@ var lineRE = /[\n\r]/;
  * @param file
  * @param template
  * @param [options]
+ * @param [options.dirname]
  * @param [options.file]
  * @param [options.cache]
  * @returns {Function}
@@ -84,6 +85,7 @@ module.exports = function (file, template, options) {
     try {
         var snippets = syntaxParser(template, regular, function (source, flag, expression) {
             var snippet = this;
+            snippet.dirname = options.dirname;
             snippet.file = file;
 
             try {
