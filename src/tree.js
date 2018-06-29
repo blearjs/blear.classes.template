@@ -39,6 +39,7 @@ var Tree = Class.extend({
             the[_currentChildren] = the[_nextChildren];
         }
 
+        the[_currentChildren].length = 0;
         the[_put](item);
     },
 
