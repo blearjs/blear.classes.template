@@ -149,7 +149,7 @@ module.exports = function (file, template, options) {
         pushScript('}');
         pushScript('return ' + utilsName + '.trim(' + outputName + '.join(""));');
 
-        console.log(scripts.join('\n'));
+        // console.log(scripts.join('\n'));
 
         try {
             fn = new Function(dataName, utilsName, filtersName, accidentName, scripts.join('\n'));

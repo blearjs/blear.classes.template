@@ -78,15 +78,19 @@ describe('if 语法', function () {
 
     it('if + if 连续', function () {
         var tpl = new Template(
-            '{{#if 1}}' +
+            '{{#if 0}}' +
             /**/'1' +
-            '{{/if}}' +
-            '{{#if 2}}' +
+            '{{#else if 1}}' +
             /**/'2' +
+            '{{/if}}' +
+            '{{#if 0}}' +
+            /**/'3' +
+            '{{#else if 1}}' +
+            /**/'4' +
             '{{/if}}'
         );
         var html = tpl.render();
-        expect(html).toBe('12');
+        expect(html).toBe('24');
     });
 
 });
