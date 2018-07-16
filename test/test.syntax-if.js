@@ -93,4 +93,17 @@ describe('if 语法', function () {
         expect(html).toBe('24');
     });
 
+    it('if 包含', function () {
+        var tpl = new Template(
+            '{{#if 1}}' +
+            /****/'{{#if 2}}A{{/if}}' +
+            /****/'{{#if 3}}B{{/if}}' +
+            '{{#else}}' +
+            /****/'C'+
+            '{{/if}}'
+        );
+        var html = tpl.render();
+        expect(html).toBe('AB');
+    });
+
 });

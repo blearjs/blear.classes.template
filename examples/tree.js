@@ -14,11 +14,12 @@ var Tree = require('../src/tree');
 var tree = new Tree();
 
 tree.first('1');
-tree.next('2');
+tree.first('1-1');
 tree.end();
-tree.first('3');
-tree.next('4');
-
-
+tree.first('1-2');
+tree.end();
+tree.end();
+tree.first('2');
+tree.end();
 console.log(JSON.stringify(tree.siblings(), null, 4));
 

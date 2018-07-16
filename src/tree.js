@@ -35,11 +35,13 @@ var Tree = Class.extend({
     first: function (item) {
         var the = this;
 
-        if (the[_nextChildren]) {
-            the[_currentChildren] = the[_nextChildren];
+        // 当前已有项目，说明是新开层级
+        if (the[_currentChildren].length) {
+            var newChildren = [];
+            newChildren.parent = the[_currentChildren];
+            the[_currentChildren] = newChildren;
         }
 
-        the[_currentChildren].length = 0;
         the[_put](item);
     },
 
@@ -58,11 +60,13 @@ var Tree = Class.extend({
      */
     end: function () {
         var the = this;
-        the[_nextChildren] = the[_currentChildren] =
-            // 当前层级结束跳到上一个层级
-            the[_currentChildren].parent ||
-            // 或者当前层级已经是第一级，则还是当前层级
-            the[_currentChildren];
+        var parent = the[_currentChildren].parent;
+
+        if (parent) {
+            the[_currentChildren] = parent;
+        } else {
+            the[_currentChildren] = [];
+        }
     },
 
     /**
@@ -77,18 +81,14 @@ var Tree = Class.extend({
 var sole = Tree.sole;
 var _children = sole();
 var _currentChildren = sole();
-var _nextChildren = sole();
 var _put = sole();
 var prop = Tree.prototype;
 
 prop[_put] = function (item) {
     var the = this;
 
-    the[_nextChildren] = [];
-    the[_nextChildren].parent = the[_currentChildren];
     the[_currentChildren].push({
-        item: item,
-        children: the[_nextChildren]
+        item: item
     });
 };
 
