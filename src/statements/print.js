@@ -58,7 +58,6 @@ module.exports = function () {
                 case 'number':
                 case 'keyword':
                 case 'regex':
-                case 'whitespace':
                     if (piping) {
                         lastFilterArg += value;
                     } else {
@@ -75,7 +74,7 @@ module.exports = function () {
                             pushName();
                         }
                     } else {
-                        code += value;
+                        code += '(typeof(' + value + ')==="undefined"?"":(' + value + '))';
                     }
                     break;
 
@@ -137,7 +136,6 @@ module.exports = function () {
             throw err;
         }
 
-        code = 'typeof(' + code + ')==="undefined"?undefined:(' + code + ')';
         array.each(pipes, function (index, pipe) {
             pipe.args.unshift(code);
             code = (pipe.native ? roster.utils : roster.filters) + '.' + pipe.name + '(' + pipe.args.join(',') + ')';
