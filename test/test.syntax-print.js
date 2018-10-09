@@ -75,21 +75,7 @@ describe('print 语法', function () {
         var tpl = new Template('{{a}}');
         var html = tpl.render();
 
-        expect(html).toEqual('');
-    });
-
-    it('undefined || expression', function () {
-        var tpl = new Template('{{a  || b}}');
-        var html = tpl.render();
-
-        expect(html).toEqual('');
-    });
-
-    it('undefined || expression.expression', function () {
-        var tpl = new Template('{{a  || b || c.d}}');
-        var html = tpl.render();
-
-        expect(html).toEqual('');
+        expect(html).toMatch(/^\s+>>\s1\|/m);
     });
 
 });

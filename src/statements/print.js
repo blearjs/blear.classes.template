@@ -75,7 +75,7 @@ module.exports = function () {
                             pushName();
                         }
                     } else {
-                        code += '(typeof(' + value + ')==="undefined"?"":(' + value + '))';
+                        code += value;
                     }
                     break;
 
