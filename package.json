@@ -1,6 +1,6 @@
 {
   "name": "blear.classes.template",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "字符串类型模板引擎",
   "scripts": {
     "live": "browser-sync start --config bs-config.js",
