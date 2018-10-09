@@ -58,6 +58,7 @@ module.exports = function () {
                 case 'number':
                 case 'keyword':
                 case 'regex':
+                case 'whitespace':
                     if (piping) {
                         lastFilterArg += value;
                     } else {

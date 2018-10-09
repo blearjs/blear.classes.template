@@ -79,13 +79,11 @@ function tokenizer(expression) {
         return matchToToken(tokenRE.exec(value));
     });
 
-    return array.filter(array.map(tokens, function (token) {
+    return array.map(tokens, function (token) {
         if (token.type === nameType && reservedKeywords[token.value]) {
             token.type = keywordType;
         }
 
         return token;
-    }), function (token) {
-        return token.type !== whitespaceType;
     });
 }
