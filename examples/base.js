@@ -8,28 +8,32 @@
 
 'use strict';
 
-var Template = require('../src/index');
+// var Template = require('../src/index');
+var invalid = require('../src/parsers/invalid');
 
-var template = require('./base-template.html');
-var tpl = new Template(template, {
-    file: '/base-template.html'
-});
 
-Template.filter('upperCase', function (code) {
-    return code.toUpperCase();
-});
+window.invalid = invalid;
 
-Template.loader = function (file, options) {
-    return {
-        file: options.parent + file,
-        template: '【'+ file + ',' + options.parent + '】'
-    };
-};
-
-document.getElementById('ret').innerText = tpl.render({
-    a: 1,
-    b: 2,
-    c: 3,
-    d: 4
-});
+// var template = require('./base-template.html');
+// var tpl = new Template(template, {
+//     file: '/base-template.html'
+// });
+//
+// Template.filter('upperCase', function (code) {
+//     return code.toUpperCase();
+// });
+//
+// Template.loader = function (file, options) {
+//     return {
+//         file: options.parent + file,
+//         template: '【'+ file + ',' + options.parent + '】'
+//     };
+// };
+//
+// document.getElementById('ret').innerText = tpl.render({
+//     a: 1,
+//     b: 2,
+//     c: 3,
+//     d: 4
+// });
 

@@ -10,7 +10,8 @@
 
 var array = require('blear.utils.array');
 
-var expressionParser = require('../parsers/expression');
+var parse = require('../parsers/expression');
+var invalid = require('../parsers/invalid');
 var roster = require('../roster');
 
 // 这里保证每一次编译都是一个新环境
@@ -22,7 +23,7 @@ module.exports = function () {
 
         var snippet = this;
         var unescape = flag === '=';
-        var tokens = expressionParser(expression);
+        var tokens = parse(expression);
         var piping = false;
         var pipes = [];
         var code = '';
@@ -130,6 +131,13 @@ module.exports = function () {
             });
         }
 
+        var err;
+
+        if ((err = invalid(code))) {
+            throw err;
+        }
+
+        code = 'typeof(' + code + ')==="undefined"?undefined:(' + code + ')';
         array.each(pipes, function (index, pipe) {
             pipe.args.unshift(code);
             code = (pipe.native ? roster.utils : roster.filters) + '.' + pipe.name + '(' + pipe.args.join(',') + ')';

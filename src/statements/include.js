@@ -9,7 +9,7 @@
 'use strict';
 
 var roster = require('../roster');
-var valid = require('../parsers/valid');
+var invalid = require('../parsers/invalid');
 
 var includeRE = /^include\s+([\s\S]+)$/;
 
@@ -28,9 +28,10 @@ module.exports = function () {
         }
 
         var name = matches[1];
+        var err;
 
-        if (!valid(name)) {
-            throw new SyntaxError('路径语法表达式有误');
+        if ((err = invalid(name))) {
+            throw err;
         }
 
         var file = snippet.file;

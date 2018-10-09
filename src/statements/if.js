@@ -12,7 +12,7 @@ var string = require('blear.utils.string');
 var array = require('blear.utils.array');
 
 var Tree = require('../tree');
-var valid = require('../parsers/valid');
+var invalid = require('../parsers/invalid');
 
 // 这里保证每一次编译都是一个新环境
 module.exports = function () {
@@ -35,9 +35,10 @@ module.exports = function () {
         if (!closed) {
             var method = matches[1].replace(/\s+/, ' ');
             var condition = string.trim(matches[2]);
+            var err;
 
-            if (method !== 'else' && !valid(condition)) {
-                throw new SyntaxError('条件表达式语法有误');
+            if (method !== 'else' && (err = invalid('if(' + condition + '){}'))) {
+                throw err;
             }
         }
 

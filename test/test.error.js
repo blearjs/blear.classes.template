@@ -14,14 +14,6 @@ var Template = require('../src/index.js');
 
 describe('error', function () {
 
-    it('变量', function () {
-        var tpl = new Template('{{a}}');
-        var html = tpl.render();
-
-        console.log(html);
-        expect(html).toMatch(/^ >> 1\| /m);
-    });
-
     it('插值语法', function () {
         var tpl = new Template(
             '1\n' +
@@ -97,6 +89,22 @@ describe('error', function () {
         expect(html).toMatch(/^ >> 6\| /m);
     });
 
+    it('else if 空', function () {
+        var tpl = new Template(
+            '1\n' +
+            '2\n' +
+            '3\n' +
+            '4\n' +
+            '5\n' +
+            '6{{#if 1}}\n'+
+            '7{{#else if}}{{}}\n'
+        );
+        var html = tpl.render();
+
+        console.log(html);
+        expect(html).toMatch(/^ >> 7\| /m);
+    });
+
     it('内容过长', function () {
         var tpl = new Template(
             '1\n' +
@@ -104,7 +112,7 @@ describe('error', function () {
             '3\n' +
             '4\n' +
             '5' + string.repeat('0', 40) + '\n' +
-            '6{{Date.now()}}' + string.repeat('0', 40) + '{{ a }}'
+            '6{{Date.now()}}' + string.repeat('0', 40) + '{{ a b }}'
         );
         var html = tpl.render();
 
@@ -116,7 +124,7 @@ describe('error', function () {
         var tpl = new Template(
             '{{#for a in b}}\n' +
             /**/'{{#for c in a}}\n' +
-            /**/'{{c1}}\n' +
+            /**/'{{c 1}}\n' +
             /**/'{{/for}}\n' +
             '{{/for}}\n'
         );
@@ -161,7 +169,7 @@ describe('error', function () {
     });
 
     it('throw', function () {
-        var tpl  = new Template('{{a}}', {
+        var tpl  = new Template('{{a b}}', {
             error: true
         });
         var err = null;
@@ -172,7 +180,7 @@ describe('error', function () {
             err = _err;
         }
 
-        expect(err.name).toBe('ReferenceError');
+        expect(err.name).toBe('SyntaxError');
         expect(err.message).toMatch(/^ >> 1 |/m);
     });
 
