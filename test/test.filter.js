@@ -125,4 +125,41 @@ describe('filter', function () {
         expect(html).toBe('23');
     });
 
+    it('instance filter and static filter', function () {
+        var staticFilter1 = 'f1' + Date.now();
+        var staticFilter2 = 'f2' + Date.now();
+        // 与静态相同名字
+        var instanceFilter3 = staticFilter1;
+        var instanceFilter4 = 'f4' + Date.now();
+
+        Template.filter(staticFilter1, function () {
+            return '1';
+        });
+        Template.filter(staticFilter2, function () {
+            return '2';
+        });
+        var tpl = new Template(
+            // 3
+            '{{a | ' + staticFilter1 + '}}' +
+            // 2
+            '{{a | ' + staticFilter2 + '}}' +
+            // 3
+            '{{a | ' + instanceFilter3 + '}}' +
+            // 4
+            '{{a | ' + instanceFilter4 + '}}' +
+            ''
+        );
+        tpl.filter(instanceFilter3, function () {
+            return '3';
+        });
+        tpl.filter(instanceFilter4, function () {
+            return '4';
+        });
+        var html = tpl.render({
+            a: ''
+        });
+
+        expect(html).toEqual('3234');
+    });
+
 });
