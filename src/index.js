@@ -41,25 +41,40 @@ var defaults = {
      */
     error: false
 };
-var filters = {};
+var staticFilters = {};
 var Template = Class.extend({
     constructor: function (template, options) {
         var the = this;
 
         Template.parent(the);
+        the[_filters] = {};
         the[_options] = object.assign({}, defaults, options);
         the[_options][roster.caches] = the[_options].cache ? Object.create(null) : null;
         the[_tpl] = compiler(the[_options].file, template, the[_options]);
     },
 
     /**
+     * 添加过滤器【实例】
+     * @param name
+     * @param filter
+     * @returns {Template}
+     */
+    filter: function (name, filter) {
+        var the = this;
+        the[_filters][name] = filter;
+        return the;
+    },
+
+    /**
      * 渲染
-     * @param data
+     * @param [data]
      * @returns {*}
      */
     render: function (data) {
         var the = this;
         var options = the[_options];
+        // 合并静态 filter 和 实例 filter
+        var filters = object.assign({}, staticFilters, the[_filters]);
 
         data = data || {};
         try {
@@ -74,22 +89,23 @@ var Template = Class.extend({
     }
 });
 var sole = Template.sole;
+var _filters = sole();
 var _options = sole();
 var _tpl = sole();
 
 Template.defaults = defaults;
 
 /**
- * 添加过滤器【全局】
+ * 添加过滤器【静态】
  * @param name
  * @param filter
  */
 Template.filter = function (name, filter) {
-    filters[name] = filter;
+    staticFilters[name] = filter;
 };
 
 /**
- * 自定义路径解决器【全局】
+ * 自定义路径解决器【静态】
  * @param loader
  */
 object.define(Template, 'resolver', {
@@ -102,7 +118,7 @@ object.define(Template, 'resolver', {
 });
 
 /**
- * 自定义加载器【全局】
+ * 自定义加载器【静态】
  * @param loader
  */
 object.define(Template, 'loader', {
